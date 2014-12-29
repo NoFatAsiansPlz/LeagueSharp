@@ -400,7 +400,6 @@ namespace Kiteo
                 var drawings = new Menu("Señalizaciones", "Señalizaciones");
                 drawings.AddItem(new MenuItem("AACircle", "Mi Rango Ataque Basico").SetShared().SetValue(new Circle(true, Color.FloralWhite)));
                 drawings.AddItem(new MenuItem("AACircle2", "Rango Ataque Basico Enemigo").SetShared().SetValue(new Circle(true, Color.Pink)));
-                drawings.AddItem(new MenuItem("HoldZone", "Señalizar Mi Personaje").SetValue(new Circle(false, Color.Red)));
                 drawings.AddItem(new MenuItem("Matar_Minion", "Señalizar Matar Minion").SetValue(new Circle(true, Color.Lime)));
                 _config.AddSubMenu(drawings);
 
@@ -667,11 +666,6 @@ namespace Kiteo
                     {
                         Utility.DrawCircle(enemy.Position, GetRealAutoAttackRange(enemy), _config.Item("AACircle2").GetValue<Circle>().Color);
                     }
-                }
-
-                if (_config.Item("HoldZone").GetValue<Circle>().Active)
-                {
-                    Utility.DrawCircle(ObjectManager.Player.Position, _config.Item("HoldPosRadius").GetValue<Slider>().Value, _config.Item("HoldZone").GetValue<Circle>().Color);
                 }
 
                 if (_config.Item("Matar_Minion").GetValue<Circle>().Active)

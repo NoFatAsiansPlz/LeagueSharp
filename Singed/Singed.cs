@@ -44,7 +44,7 @@ namespace Singed
             W.SetSkillshot(0.5f, 350f, 700f, false, SkillshotType.SkillshotCircle);
 
             EjecutarMenu();
-            Game.PrintChat("<font color=\"#DF0101\">LeagueSharp - Assemblie singed cargada</font>");
+            Game.PrintChat("<font color=\"#DF0101\">LeagueSharp - Assemblie singed cargada, el uso de exploits puede llevar una sanccion por parte de rito</font>");
         }
 
         private static void EjecutarMenu()
