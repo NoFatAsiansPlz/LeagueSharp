@@ -82,6 +82,7 @@ namespace Singed
         {
             var UsarW = Menu.Item("UsarW").GetValue<bool>();
             var UsarE = Menu.Item("UsarE").GetValue<bool>();
+            var UsarR = Menu.Item("UsarR").GetValue<bool>();
             var objetivo = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
             if (objetivo != null)
             {
@@ -89,6 +90,8 @@ namespace Singed
                     W.Cast(objetivo);
                 if (E.IsReady() && Jugador.Distance(objetivo) < E.Range && UsarE)
                     E.Cast(objetivo, true);
+                if (E.IsReady() && UsarE)
+                    E.Cast(ObjectManager.Player, true);
             }
         }
 
