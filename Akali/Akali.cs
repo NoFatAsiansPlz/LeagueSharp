@@ -13,6 +13,7 @@ namespace Akali
 {
     class Akali
     {
+        public static Menu Menu;
         public static Spell Q, E, W, R;
         public static Items.Item Zhonyas;
         public static SpellSlot Ignite;
@@ -56,7 +57,7 @@ namespace Akali
 
         private static void EjecutarMenu()
         {
-            var champMenu = new Menu("Assemblie Akali", "Akali - Menu");
+            var Menu = new Menu("Assemblie Akali", "Akali - Menu");
             {
                 var comboMenu = new Menu("Combo", "Combo");
                 {
