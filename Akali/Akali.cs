@@ -17,6 +17,7 @@ namespace Akali
         public static Spell Q, E, W, R;
         public static Items.Item Zhonyas;
         public static SpellSlot Ignite;
+        public static DañoTotal dañototal = new DañoTotal();
 
         private static void Main(string[] args)
         {
@@ -75,12 +76,13 @@ namespace Akali
                     Menu.AddSubMenu(LimpiarLinea);
                 }
 
-                var Señalizaciones = new Menu("Dibujos", "Alcanze Hechizos");
+                var Señalizaciones = new Menu("Dibujos", "Alcanze Hechizos / Daño Combo");
                 {
-                    Señalizaciones.AddItem(new MenuItem("DibujoQ", "Limpiar usando la E?").SetValue(true));
-                    Señalizaciones.AddItem(new MenuItem("DibujoW", "Limpiar usando la E?").SetValue(false));
-                    Señalizaciones.AddItem(new MenuItem("DibujoE", "Limpiar usando la E?").SetValue(false));
-                    Señalizaciones.AddItem(new MenuItem("DibujoR", "Limpiar usando la E?").SetValue(true));
+                    Señalizaciones.AddItem(new MenuItem("DibujoQ", "Mostrar alcanze de la Q?").SetValue(true));
+                    Señalizaciones.AddItem(new MenuItem("DibujoW", "Mostrar alcanze de la W?").SetValue(false));
+                    Señalizaciones.AddItem(new MenuItem("DibujoE", "Mostrar alcanze de la E?").SetValue(false));
+                    Señalizaciones.AddItem(new MenuItem("DibujoR", "Mostrar alcanze de la R?").SetValue(true));
+                    Señalizaciones.AddItem(new MenuItem("DañoCombo", "Mostrar Daño total combo?").SetValue(true));
                     Menu.AddSubMenu(Señalizaciones);
                 }
                 Menu.AddToMainMenu();
@@ -108,6 +110,14 @@ namespace Akali
                 if (Menu.Item("DibujoR").GetValue<bool>() && R.Level > 0)
                 {
                     Utility.DrawCircle(ObjectManager.Player.Position, R.Range, System.Drawing.Color.Green);
+                }
+                if (Menu.Item("DañoCombo").GetValue<bool>())
+                {
+                    foreach (var enemigo in ObjectManager.Get<Obj_AI_Hero>().Where(enemigoo => !enemigoo.IsDead && enemigoo.IsEnemy && enemigoo.IsVisible))
+                    {
+                        dañototal.unit = enemigo;
+                        //dañototal.drawDmg(rushDmgBasedOnDist(enemy), Color.Yellow);
+                    }
                 }
             }
             else
