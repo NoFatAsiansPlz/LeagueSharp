@@ -37,7 +37,7 @@ namespace Kiteo
             "monkeykingdoubleattack", "mordekaisermaceofspades", "nasusq", "nautiluspiercinggaze", "netherblade",
             "parley", "poppydevastatingblow", "powerfist", "renektonpreexecute", "rengarq", "shyvanadoubleattack",
             "sivirw", "takedown", "talonnoxiandiplomacy", "trundletrollsmash", "vaynetumble", "vie", "volibearq",
-            "xenzhaocombotarget", "yorickspectral"
+            "xenzhaocombotarget", "yorickspectral", "reksaiq"
         };
 
         private static readonly string[] NoAttacks =
