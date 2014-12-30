@@ -199,8 +199,7 @@ namespace Kiteo
         {
             if (LastAATick <= Environment.TickCount)
             {
-                return (Environment.TickCount + Game.Ping / 2 >=
-                        LastAATick + Player.AttackCastDelay * 1000 + extraWindup) && Move;
+                return (Environment.TickCount + Game.Ping / 2 >= LastAATick + Player.AttackCastDelay * 1000 + extraWindup) && Move;
             }
 
             return false;
@@ -248,31 +247,24 @@ namespace Kiteo
             var point = position;
             if (useFixedDistance)
             {
-                point = Player.ServerPosition +
-                        (randomizeMinDistance
-                            ? (_random.NextFloat(0.6f, 1) + 0.2f) * _minDistance
-                            : _minDistance) * (position.To2D() - Player.ServerPosition.To2D()).Normalized().To3D();
+                point = Player.ServerPosition + (randomizeMinDistance ? (_random.NextFloat(0.6f, 1) + 0.2f) * _minDistance : _minDistance) * (position.To2D() - Player.ServerPosition.To2D()).Normalized().To3D();
             }
             else
             {
                 if (randomizeMinDistance)
                 {
-                    point = Player.ServerPosition +
-                            (_random.NextFloat(0.6f, 1) + 0.2f) * _minDistance *
-                            (position.To2D() - Player.ServerPosition.To2D()).Normalized().To3D();
+                    point = Player.ServerPosition + (_random.NextFloat(0.6f, 1) + 0.2f) * _minDistance * (position.To2D() - Player.ServerPosition.To2D()).Normalized().To3D();
                 }
                 else if (Player.ServerPosition.Distance(position) > _minDistance)
                 {
-                    point = Player.ServerPosition +
-                            _minDistance * (position.To2D() - Player.ServerPosition.To2D()).Normalized().To3D();
+                    point = Player.ServerPosition + _minDistance * (position.To2D() - Player.ServerPosition.To2D()).Normalized().To3D();
                 }
             }
-
             Player.IssueOrder(GameObjectOrder.MoveTo, point);
             LastMoveCommandPosition = point;
         }
 
-        public static void Orbwalk(AttackableUnit target, Vector3 position, float extraWindup = 90, float holdAreaRadius = 0, bool useFixedDistance = true, bool randomizeMinDistance = true)
+        public static void Orbwalk(AttackableUnit target, Vector3 position, float extraWindup = 80, float holdAreaRadius = 0, bool useFixedDistance = true, bool randomizeMinDistance = true)
         {
             try
             {
@@ -280,16 +272,13 @@ namespace Kiteo
                 {
                     DisableNextAttack = false;
                     FireBeforeAttack(target);
-
                     if (!DisableNextAttack)
                     {
                         Player.IssueOrder(GameObjectOrder.AttackUnit, target);
-
                         if (_lastTarget != null && _lastTarget.IsValid && _lastTarget != target)
                         {
                             LastAATick = Environment.TickCount + Game.Ping / 2;
                         }
-
                         _lastTarget = target;
                         return;
                     }
@@ -315,7 +304,6 @@ namespace Kiteo
         {
             if (sender.IsValid && sender.IsMe && (args.BitData & 1) == 0 && ((args.BitData >> 4) & 1) == 1)
             {
-                //Game.PrintChat("RESET!!!" + Environment.TickCount);
                 ResetAutoAttackTimer();
             }
         }
@@ -326,17 +314,14 @@ namespace Kiteo
             try
             {
                 var spellName = Spell.SData.Name;
-
                 if (IsAutoAttackReset(spellName) && unit.IsMe)
                 {
                     Utility.DelayAction.Add(250, ResetAutoAttackTimer);
                 }
-
                 if (!IsAutoAttack(spellName))
                 {
                     return;
                 }
-
                 if (unit.IsMe && Spell.Target is Obj_AI_Base)
                 {
                     LastAATick = Environment.TickCount - Game.Ping / 2;
@@ -346,21 +331,17 @@ namespace Kiteo
                         FireOnTargetSwitch(target);
                         _lastTarget = target;
                     }
-
                     if (unit.IsMelee())
                     {
                         Utility.DelayAction.Add((int)(unit.AttackCastDelay * 1000 + 40), () => FireAfterAttack(unit, _lastTarget));
                     }
                 }
-
                 FireOnAttack(unit, _lastTarget);
-
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
-            
         }
 
         public class BeforeAttackEventArgs
@@ -427,7 +408,10 @@ namespace Kiteo
 
             private int FarmDelay
             {
-                get { return _config.Item("FarmDelay").GetValue<Slider>().Value; }
+                get 
+                { 
+                    return _config.Item("FarmDelay").GetValue<Slider>().Value; 
+                }
             }
 
             public OrbwalkingMode ActiveMode
@@ -461,36 +445,27 @@ namespace Kiteo
 
                     return OrbwalkingMode.None;
                 }
-                set { _mode = value; }
+                set 
+                { 
+                    _mode = value; 
+                }
             }
 
-            /// <summary>
-            ///     Enables or disables the auto-attacks.
-            /// </summary>
             public void SetAttack(bool b)
             {
                 Attack = b;
             }
 
-            /// <summary>
-            ///     Enables or disables the movement.
-            /// </summary>
             public void SetMovement(bool b)
             {
                 Move = b;
             }
 
-            /// <summary>
-            ///     Forces the orbwalker to attack the set target if valid and in range.
-            /// </summary>
             public void ForceTarget(Obj_AI_Base target)
             {
                 _forcedTarget = target;
             }
 
-            /// <summary>
-            ///     Forces the orbwalker to move to that point while orbwalking (Game.CursorPos by default).
-            /// </summary>
             public void SetOrbwalkingPoint(Vector3 point)
             {
                 _orbwalkingPoint = point;
@@ -498,15 +473,7 @@ namespace Kiteo
 
             private bool ShouldWait()
             {
-                return
-                    ObjectManager.Get<Obj_AI_Minion>()
-                        .Any(
-                            minion =>
-                                minion.IsValidTarget() && minion.Team != GameObjectTeam.Neutral &&
-                                InAutoAttackRange(minion) &&
-                                HealthPrediction.LaneClearHealthPrediction(
-                                    minion, (int) ((Player.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay) <=
-                                Player.GetAutoAttackDamage(minion));
+                return ObjectManager.Get<Obj_AI_Minion>().Any(minion =>minion.IsValidTarget() && minion.Team != GameObjectTeam.Neutral && InAutoAttackRange(minion) && HealthPrediction.LaneClearHealthPrediction(minion, (int) ((Player.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay) <=Player.GetAutoAttackDamage(minion));
             }
 
             public AttackableUnit GetTarget()
