@@ -52,7 +52,7 @@ namespace Akali
             R = new Spell(SpellSlot.R, 800);
 
             EjecutarMenu();
-            Game.PrintChat("<font color=\"#DF0101\">LeagueSharp - Assemblie Akali cargada, el uso de exploits puede llevar una sanccion por parte de rito</font>");
+            Game.PrintChat("<font color=\"#DF0101\">LeagueSharp - Assemblie Akali cargada</font>");
         }
 
         private static void EjecutarMenu()
@@ -65,6 +65,7 @@ namespace Akali
                     comboMenu.AddItem(new MenuItem("UsarW", "Utilizar W").SetValue(true));
                     comboMenu.AddItem(new MenuItem("UsarE", "Utilizar E").SetValue(false));
                     comboMenu.AddItem(new MenuItem("UsarR", "Utilizar R").SetValue(false));
+                    Menu.AddSubMenu(comboMenu);
                 }
 
                 var LimpiarLinea = new Menu("LimpiarLinea", "Limpiar la Linea");
@@ -72,10 +73,10 @@ namespace Akali
                     LimpiarLinea.AddItem(new MenuItem("LimpiarE", "Limpiar usando la E?").SetValue(true));
                     LimpiarLinea.AddItem(new MenuItem("MinimoEMinions", "Numero de Minions para usar la E").SetValue(new Slider(2, 1, 5)));
                     LimpiarLinea.AddItem(new MenuItem("LimpiarLineaActivo", "Activo:").SetValue(new KeyBind('V', KeyBindType.Press)));
+                    Menu.AddSubMenu(LimpiarLinea);
                 }
-
+                Menu.AddToMainMenu();
             }
-
         }
 
     }
