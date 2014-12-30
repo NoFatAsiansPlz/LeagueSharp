@@ -57,7 +57,7 @@ namespace Akali
 
         private static void EjecutarMenu()
         {
-            var Menu = new Menu("Assemblie Akali", "Akali - Menu");
+            Menu = new Menu("Assemblie Akali", "Akali - Menu", true);
             {
                 var comboMenu = new Menu("Combo", "Combo");
                 {
