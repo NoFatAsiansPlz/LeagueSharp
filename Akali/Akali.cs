@@ -52,7 +52,6 @@ namespace Akali
             R = new Spell(SpellSlot.R, 800);
 
             EjecutarMenu();
-            Game.PrintChat("<font color=\"#DF0101\">LeagueSharp - Assemblie Akali cargada</font>");
         }
 
         private static void EjecutarMenu()
@@ -75,9 +74,46 @@ namespace Akali
                     LimpiarLinea.AddItem(new MenuItem("LimpiarLineaActivo", "Activo:").SetValue(new KeyBind('V', KeyBindType.Press)));
                     Menu.AddSubMenu(LimpiarLinea);
                 }
+
+                var Señalizaciones = new Menu("Dibujos", "Alcanze Hechizos");
+                {
+                    Señalizaciones.AddItem(new MenuItem("DibujoQ", "Limpiar usando la E?").SetValue(true));
+                    Señalizaciones.AddItem(new MenuItem("DibujoW", "Limpiar usando la E?").SetValue(false));
+                    Señalizaciones.AddItem(new MenuItem("DibujoE", "Limpiar usando la E?").SetValue(false));
+                    Señalizaciones.AddItem(new MenuItem("DibujoR", "Limpiar usando la E?").SetValue(true));
+                    Menu.AddSubMenu(Señalizaciones);
+                }
                 Menu.AddToMainMenu();
             }
+            Game.PrintChat("<font color=\"#DF0101\">LeagueSharp - Assemblie Akali cargada</font>");
+            Drawing.OnDraw += AlcanzeHechizos;
         }
 
+        public static void AlcanzeHechizos(EventArgs args)
+        {
+            if (!ObjectManager.Player.IsDead)
+            {
+                if (Menu.Item("DibujoQ").GetValue<bool>() && Q.Level > 0)
+                {
+                    Utility.DrawCircle(ObjectManager.Player.Position, Q.Range, System.Drawing.Color.Red);
+                }
+                if (Menu.Item("DibujoW").GetValue<bool>() && W.Level > 0)
+                {
+                    Utility.DrawCircle(ObjectManager.Player.Position, W.Range, System.Drawing.Color.Black);
+                }
+                if (Menu.Item("DibujoE").GetValue<bool>() && E.Level > 0)
+                {
+                    Utility.DrawCircle(ObjectManager.Player.Position, E.Range, System.Drawing.Color.Cyan);
+                }
+                if (Menu.Item("DibujoR").GetValue<bool>() && R.Level > 0)
+                {
+                    Utility.DrawCircle(ObjectManager.Player.Position, R.Range, System.Drawing.Color.Green);
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
     }
 }
