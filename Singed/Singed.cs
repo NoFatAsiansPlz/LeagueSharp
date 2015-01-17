@@ -17,7 +17,7 @@ namespace Singed
         {
             if (args != null)
             {
-                CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
+                CustomEvents.Game.OnGameLoad += CargarScript;
                 AppDomain.CurrentDomain.UnhandledException +=
                 delegate(object sender, UnhandledExceptionEventArgs eventArgs)
                 {
@@ -30,7 +30,7 @@ namespace Singed
             }
         }
 
-        private static void Game_OnGameLoad(EventArgs args)
+        private static void CargarScript(EventArgs args)
         {
             if (ObjectManager.Player.BaseSkinName != "Singed")
             {
@@ -57,7 +57,6 @@ namespace Singed
             var comboMenu = new Menu("Combo", "combo");
             comboMenu.AddItem(new MenuItem("UsarW", "Utilizar W").SetValue(true));
             comboMenu.AddItem(new MenuItem("UsarE", "Utilizar E").SetValue(true));
-            comboMenu.AddItem(new MenuItem("UsarR", "Utilizar R").SetValue(true));
             Menu.AddSubMenu(comboMenu);
 
             Menu.AddItem(new MenuItem("Exploit", "Invisible Q").SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Toggle)));
@@ -82,7 +81,6 @@ namespace Singed
         {
             var UsarW = Menu.Item("UsarW").GetValue<bool>();
             var UsarE = Menu.Item("UsarE").GetValue<bool>();
-            var UsarR = Menu.Item("UsarR").GetValue<bool>();
             var objetivo = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
             if (objetivo != null)
             {
@@ -90,8 +88,6 @@ namespace Singed
                     W.Cast(objetivo);
                 if (E.IsReady() && Jugador.Distance(objetivo) < E.Range && UsarE)
                     E.Cast(objetivo, true);
-                if (E.IsReady() && UsarE)
-                    E.Cast(ObjectManager.Player, true);
             }
         }
 

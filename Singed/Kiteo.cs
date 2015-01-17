@@ -55,6 +55,11 @@ namespace Kiteo
             "xenzhaothrust3"
         };
 
+        private static readonly string[] NoCancelChamps =
+        {
+            "Kalista"
+        };
+
         public static int LastAATick;
         public static bool Attack = true;
         public static bool DisableNextAttack = false;
@@ -79,9 +84,15 @@ namespace Kiteo
 
         private static void Obj_SpellMissile_OnCreate(GameObject sender, EventArgs args)
         {
+            // Deny InvalidCastException
+            if (sender is Obj_LampBulb)
+            {
+                return;
+            }
+
             if (sender.IsValid<Obj_SpellMissile>())
             {
-                var missile = (Obj_SpellMissile) sender;
+                var missile = (Obj_SpellMissile)sender;
                 if (missile.SpellCaster.IsValid<Obj_AI_Hero>() && IsAutoAttack(missile.SData.Name))
                 {
                     FireAfterAttack(missile.SpellCaster, _lastTarget);
@@ -199,9 +210,8 @@ namespace Kiteo
         {
             if (LastAATick <= Environment.TickCount)
             {
-                return (Environment.TickCount + Game.Ping / 2 >= LastAATick + Player.AttackCastDelay * 1000 + extraWindup) && Move;
+                return Move && NoCancelChamps.Contains(Player.ChampionName) ? (Environment.TickCount - LastAATick > 250) : (Environment.TickCount + Game.Ping / 2 >= LastAATick + Player.AttackCastDelay * 1000 + extraWindup);
             }
-
             return false;
         }
 
@@ -365,13 +375,11 @@ namespace Kiteo
         {
             private const float LaneClearWaitTimeMod = 2f;
             private static Menu _config;
-            private readonly Obj_AI_Hero Player;
-
             private Obj_AI_Base _forcedTarget;
             private OrbwalkingMode _mode = OrbwalkingMode.None;
             private Vector3 _orbwalkingPoint;
-
             private Obj_AI_Minion _prevMinion;
+            private readonly Obj_AI_Hero Player;
 
             public Orbwalker(Menu attachToMenu)
             {
@@ -396,10 +404,10 @@ namespace Kiteo
                 _config.AddItem(new MenuItem("FarmDelay", "Farm delay").SetShared().SetValue(new Slider(0, 200, 0)));
 
                 /*Load the menu*/
-                _config.AddItem(new MenuItem("LastHit", "Last hit").SetShared().SetValue(new KeyBind("X".ToCharArray()[0], KeyBindType.Press, false)));
-                _config.AddItem(new MenuItem("Farm", "Mixed").SetShared().SetValue(new KeyBind("C".ToCharArray()[0], KeyBindType.Press, false)));
-                _config.AddItem(new MenuItem("LaneClear", "LaneClear").SetShared().SetValue(new KeyBind("V".ToCharArray()[0], KeyBindType.Press, false)));
-                _config.AddItem(new MenuItem("Orbwalk", "Combo").SetShared().SetValue(new KeyBind(32, KeyBindType.Press, false)));
+                _config.AddItem(new MenuItem("LastHit", "Last hit").SetShared().SetValue(new KeyBind('X', KeyBindType.Press)));
+                _config.AddItem(new MenuItem("Farm", "Mixed").SetShared().SetValue(new KeyBind('C', KeyBindType.Press)));
+                _config.AddItem(new MenuItem("LaneClear", "LaneClear").SetShared().SetValue(new KeyBind('V', KeyBindType.Press)));
+                _config.AddItem(new MenuItem("Orbwalk", "Combo").SetShared().SetValue(new KeyBind(32, KeyBindType.Press)));
 
                 Player = ObjectManager.Player;
                 Game.OnGameUpdate += GameOnOnGameUpdate;
@@ -479,9 +487,9 @@ namespace Kiteo
             public AttackableUnit GetTarget()
             {
                 AttackableUnit result = null;
-                var r = float.MaxValue;
 
-                if ((ActiveMode == OrbwalkingMode.Mixed || ActiveMode == OrbwalkingMode.LaneClear) && !_config.Item("PriorizeFarm").GetValue<bool>())
+                if ((ActiveMode == OrbwalkingMode.Mixed || ActiveMode == OrbwalkingMode.LaneClear) &&
+                    !_config.Item("PriorizeFarm").GetValue<bool>())
                 {
                     var target = TargetSelector.GetTarget(-1, TargetSelector.DamageType.Physical);
                     if (target != null)
@@ -491,11 +499,11 @@ namespace Kiteo
                 }
 
                 /*Killable Minion*/
-                if (ActiveMode == OrbwalkingMode.LaneClear || ActiveMode == OrbwalkingMode.Mixed || ActiveMode == OrbwalkingMode.LastHit)
+                if (ActiveMode == OrbwalkingMode.LaneClear || ActiveMode == OrbwalkingMode.Mixed ||ActiveMode == OrbwalkingMode.LastHit)
                 {
                     foreach (var minion in ObjectManager.Get<Obj_AI_Minion>().Where(minion => minion.IsValidTarget() && InAutoAttackRange(minion) && minion.Health < 2 * (ObjectManager.Player.BaseAttackDamage + ObjectManager.Player.FlatPhysicalDamageMod)))
                     {
-                        var t = (int) (Player.AttackCastDelay * 1000) - 100 + Game.Ping / 2 + 1000 * (int) Player.Distance(minion) / (int) GetMyProjectileSpeed();
+                        var t = (int)(Player.AttackCastDelay * 1000) - 100 + Game.Ping / 2 + 1000 * (int)Player.Distance(minion) / (int)GetMyProjectileSpeed();
                         var predHealth = HealthPrediction.GetHealthPrediction(minion, t, FarmDelay);
                         if (minion.Team != GameObjectTeam.Neutral && MinionManager.IsMinion(minion, true))
                         {
@@ -503,7 +511,6 @@ namespace Kiteo
                             {
                                 FireOnNonKillableMinion(minion);
                             }
-
                             if (predHealth > 0 && predHealth <= Player.GetAutoAttackDamage(minion, true))
                             {
                                 return minion;
@@ -553,46 +560,30 @@ namespace Kiteo
                 /*Jungle minions*/
                 if (ActiveMode == OrbwalkingMode.LaneClear || ActiveMode == OrbwalkingMode.Mixed)
                 {
-                    foreach (var mob in
-                        ObjectManager.Get<Obj_AI_Minion>()
-                            .Where(
-                                mob =>
-                                    mob.IsValidTarget() && InAutoAttackRange(mob) && mob.Team == GameObjectTeam.Neutral)
-                            .Where(mob => mob.MaxHealth >= r || Math.Abs(r - float.MaxValue) < float.Epsilon))
+                    result = ObjectManager.Get<Obj_AI_Minion>().Where(mob => mob.IsValidTarget() && InAutoAttackRange(mob) && mob.Team == GameObjectTeam.Neutral).MaxOrDefault(mob => mob.MaxHealth);
+                    if (result != null)
                     {
-                        result = mob;
-                        r = mob.MaxHealth;
+                        return result;
                     }
                 }
 
                 /*Lane Clear minions*/
-                r = float.MaxValue;
                 if (ActiveMode == OrbwalkingMode.LaneClear)
                 {
                     if (!ShouldWait())
                     {
                         if (_prevMinion.IsValidTarget() && InAutoAttackRange(_prevMinion))
                         {
-                            var predHealth = HealthPrediction.LaneClearHealthPrediction(_prevMinion, (int) ((Player.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay);
-                            if (predHealth >= 2 * Player.GetAutoAttackDamage(_prevMinion, false) ||
-                                Math.Abs(predHealth - _prevMinion.Health) < float.Epsilon)
+                            var predHealth = HealthPrediction.LaneClearHealthPrediction(_prevMinion, (int)((Player.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay);
+                            if (predHealth >= 2 * Player.GetAutoAttackDamage(_prevMinion) || Math.Abs(predHealth - _prevMinion.Health) < float.Epsilon)
                             {
                                 return _prevMinion;
                             }
                         }
-
-                        foreach (var minion in ObjectManager.Get<Obj_AI_Minion>().Where(minion => minion.IsValidTarget() && InAutoAttackRange(minion)))
+                        result = (from minion in ObjectManager.Get<Obj_AI_Minion>().Where(minion => minion.IsValidTarget() && InAutoAttackRange(minion)) let predHealth = HealthPrediction.LaneClearHealthPrediction(minion, (int)((Player.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay) where predHealth >= 2 * Player.GetAutoAttackDamage(minion) || Math.Abs(predHealth - minion.Health) < float.Epsilon select minion).MaxOrDefault(m => m.Health);
+                        if (result != null)
                         {
-                            var predHealth = HealthPrediction.LaneClearHealthPrediction(minion, (int) ((Player.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay);
-                            if (predHealth >= 2 * Player.GetAutoAttackDamage(minion) || Math.Abs(predHealth - minion.Health) < float.Epsilon)
-                            {
-                                if (minion.Health >= r || Math.Abs(r - float.MaxValue) < float.Epsilon)
-                                {
-                                    result = minion;
-                                    r = minion.Health;
-                                    _prevMinion = minion;
-                                }
-                            }
+                            _prevMinion = (Obj_AI_Minion)result;
                         }
                     }
                 }
@@ -624,14 +615,14 @@ namespace Kiteo
             {
                 if (_config.Item("AACircle").GetValue<Circle>().Active)
                 {
-                    Utility.DrawCircle(Player.Position, GetRealAutoAttackRange(null) + 65, _config.Item("AACircle").GetValue<Circle>().Color);
+                    Render.Circle.DrawCircle(Player.Position, GetRealAutoAttackRange(null) + 65, _config.Item("AACircle").GetValue<Circle>().Color);
                 }
 
                 if (_config.Item("AACircle2").GetValue<Circle>().Active)
                 {
                     foreach (var enemy in AllEnemys.Where(enemy => enemy.IsValidTarget(1500)))
                     {
-                        Utility.DrawCircle(enemy.Position, GetRealAutoAttackRange(enemy), _config.Item("AACircle2").GetValue<Circle>().Color);
+                        Render.Circle.DrawCircle(enemy.Position, GetRealAutoAttackRange(enemy), _config.Item("AACircle2").GetValue<Circle>().Color);
                     }
                 }
 
@@ -642,7 +633,7 @@ namespace Kiteo
                     {
                         if (_config.Item("Matar_Minion").GetValue<Circle>().Active && minion.Health <= Player.GetAutoAttackDamage(minion, true))
                         {
-                            Utility.DrawCircle(minion.Position, minion.BoundingRadius, _config.Item("Matar_Minion").GetValue<Circle>().Color);
+                            Render.Circle.DrawCircle(minion.Position, minion.BoundingRadius, _config.Item("Matar_Minion").GetValue<Circle>().Color);
                         }
                     }
                 }
