@@ -301,30 +301,8 @@ namespace LeagueSharp.Common
                 var timePassed = (Environment.TickCount - WaypointTracker.StoredTick[unit.NetworkId]) / 1000f;
                 if (path.PathLength() >= unit.MoveSpeed * timePassed)
                 {
-                    result = CutPath(path, (int)(unit.MoveSpeed * timePassed));
+                    result = CutPath(path, (int) (unit.MoveSpeed * timePassed));
                 }
-            }
-
-            return result;
-        }
-
-        public static List<Vector2Time> GetWaypointsWithTime(this Obj_AI_Base unit)
-        {
-            var wp = unit.GetWaypoints();
-
-            if (wp.Count < 1)
-            {
-                return null;
-            }
-
-            var result = new List<Vector2Time>();
-            var speed = unit.MoveSpeed;
-            var lastPoint = wp[0];
-
-            foreach (var point in wp)
-            {
-                result.Add(new Vector2Time(point, point.Distance(lastPoint) / speed));
-                lastPoint = point;
             }
 
             return result;
@@ -407,7 +385,7 @@ namespace LeagueSharp.Common
         public static NavMeshCell ToNavMeshCell(this Vector3 position)
         {
             var nav = NavMesh.WorldToGrid(position.X, position.Y);
-            return NavMesh.GetCell((short)nav.X, (short)nav.Y);
+            return NavMesh.GetCell((short) nav.X, (short) nav.Y);
         }
 
         /// <summary>
@@ -487,7 +465,7 @@ namespace LeagueSharp.Common
                 var angle = i * Math.PI * 2 / quality;
                 pointList.Add(
                     new Vector3(
-                        center.X + radius * (float)Math.Cos(angle), center.Y + radius * (float)Math.Sin(angle),
+                        center.X + radius * (float) Math.Cos(angle), center.Y + radius * (float) Math.Sin(angle),
                         center.Z));
             }
 
@@ -541,7 +519,7 @@ namespace LeagueSharp.Common
             {
                 return 0;
             }
-            return (short)(packetData[0] + packetData[1] * 256);
+            return (short) (packetData[0] + packetData[1] * 256);
         }
 
         public static void SendAsPacket(this byte[] packetData,
@@ -656,9 +634,9 @@ namespace LeagueSharp.Common
 
                     //if (damage > unit.Health)
                     {
-                        Text.X = (int)barPos.X + XOffset;
-                        Text.Y = (int)barPos.Y + YOffset - 13;
-                        Text.text = ((int)(unit.Health - damage)).ToString();
+                        Text.X = (int) barPos.X + XOffset;
+                        Text.Y = (int) barPos.Y + YOffset - 13;
+                        Text.text = ((int) (unit.Health - damage)).ToString();
                         Text.OnEndScene();
                     }
 
@@ -745,9 +723,9 @@ namespace LeagueSharp.Common
             /// </summary>
             public static Map GetMap()
             {
-                if (MapById.ContainsKey((int)Game.MapId))
+                if (MapById.ContainsKey((int) Game.MapId))
                 {
-                    return MapById[(int)Game.MapId];
+                    return MapById[(int) Game.MapId];
                 }
 
                 return new Map
@@ -814,18 +792,6 @@ namespace LeagueSharp.Common
                 }
             }
             return true;
-        }
-    }
-
-    public class Vector2Time
-    {
-        public Vector2 Position;
-        public float Time;
-
-        public Vector2Time(Vector2 pos, float time)
-        {
-            Position = pos;
-            Time = time;
         }
     }
 }
