@@ -42,7 +42,7 @@ namespace LeagueSharp.Common
         {
             Obj_AI_Base.OnProcessSpellCast += ObjAiBaseOnOnProcessSpellCast;
             Game.OnGameUpdate += Game_OnGameUpdate;
-            //Spellbook.OnStopCast += SpellbookOnStopCast;
+            Spellbook.OnStopCast += SpellbookOnStopCast;
         }
 
         private static void Game_OnGameUpdate(EventArgs args)
@@ -60,7 +60,7 @@ namespace LeagueSharp.Common
 
         private static void SpellbookOnStopCast(Spellbook spellbook, SpellbookStopCastEventArgs args)
         {
-            if (spellbook.Owner.IsValid)
+            if (spellbook.Owner.IsValid && args.DestroyMissile && args.StopAnimation)
             {
                 if (ActiveAttacks.ContainsKey(spellbook.Owner.NetworkId))
                 {
@@ -88,9 +88,6 @@ namespace LeagueSharp.Common
             ActiveAttacks.Add(sender.NetworkId, attackData);
         }
 
-        /// <summary>
-        /// Returns the unit health after a set time milliseconds. 
-        /// </summary>
         public static float GetHealthPrediction(Obj_AI_Base unit, int time, int delay = 70)
         {
             var predictedDamage = 0f;
@@ -116,9 +113,6 @@ namespace LeagueSharp.Common
             return unit.Health - predictedDamage;
         }
 
-        /// <summary>
-        /// Returns the unit health after time milliseconds assuming that the past auto-attacks are periodic. 
-        /// </summary>
         public static float LaneClearHealthPrediction(Obj_AI_Base unit, int time, int delay = 70)
         {
             var predictedDamage = 0f;
