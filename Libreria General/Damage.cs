@@ -1,32 +1,6 @@
-#region LICENSE
-
-/*
- Copyright 2014 - 2014 LeagueSharp
- Damage.cs is part of LeagueSharp.Common.
- 
- LeagueSharp.Common is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- LeagueSharp.Common is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with LeagueSharp.Common. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-#endregion
-
-#region
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
-#endregion
 
 namespace LeagueSharp.Common
 {
@@ -89,7 +63,7 @@ namespace LeagueSharp.Common
             {
                 ChampionName = "Aatrox",
                 IsActive = (source, target) => (source.HasBuff("AatroxWPower") && source.HasBuff("AatroxWONHPowerBuff")),
-                GetDamage = (source, target) => ((float) source.GetSpellDamage(target, SpellSlot.W)),
+                GetDamage = (source, target) => ((float)source.GetSpellDamage(target, SpellSlot.W)),
             };
             AttackPassives.Add(p);
 
@@ -153,7 +127,7 @@ namespace LeagueSharp.Common
                 ChampionName = "Corki",
                 IsActive = (source, target) => (source.HasBuff("RapidReload")),
                 GetDamage =
-                    (source, target) => ((float) 0.1d * (source.BaseAttackDamage + source.FlatPhysicalDamageMod)),
+                    (source, target) => ((float)0.1d * (source.BaseAttackDamage + source.FlatPhysicalDamageMod)),
             };
             AttackPassives.Add(p);
 
@@ -168,7 +142,7 @@ namespace LeagueSharp.Common
                     (source, target) =>
                         (from buff in target.Buffs where buff.DisplayName == "GnarWProc" select buff.Count)
                             .FirstOrDefault() == 2,
-                GetDamage = (source, target) => ((float) source.GetSpellDamage(target, SpellSlot.W)),
+                GetDamage = (source, target) => ((float)source.GetSpellDamage(target, SpellSlot.W)),
             };
             AttackPassives.Add(p);
 
@@ -197,7 +171,7 @@ namespace LeagueSharp.Common
             {
                 ChampionName = "Katarina",
                 IsActive = (source, target) => (target.HasBuff("KataQMark1")),
-                GetDamage = (source, target) => ((float) source.GetSpellDamage(target, SpellSlot.Q, 1)),
+                GetDamage = (source, target) => ((float)source.GetSpellDamage(target, SpellSlot.Q, 1)),
             };
             AttackPassives.Add(p);
 
@@ -209,7 +183,7 @@ namespace LeagueSharp.Common
             {
                 ChampionName = "KogMaw",
                 IsActive = (source, target) => (source.HasBuff("KogMawBioArcaneBarrage")),
-                GetDamage = (source, target) => ((float) source.GetSpellDamage(target, SpellSlot.W)),
+                GetDamage = (source, target) => ((float)source.GetSpellDamage(target, SpellSlot.W)),
             };
             AttackPassives.Add(p);
 
@@ -226,7 +200,7 @@ namespace LeagueSharp.Common
                         (float)
                             source.CalcDamage(
                                 target, DamageType.Magical,
-                                (float) 0.06 * (source.BaseAttackDamage + source.FlatPhysicalDamageMod)),
+                                (float)0.06 * (source.BaseAttackDamage + source.FlatPhysicalDamageMod)),
             };
             AttackPassives.Add(p);
 
@@ -238,7 +212,7 @@ namespace LeagueSharp.Common
             {
                 ChampionName = "Nasus",
                 IsActive = (source, target) => (source.HasBuff("SiphoningStrike")),
-                GetDamage = (source, target) => ((float) source.GetSpellDamage(target, SpellSlot.Q)),
+                GetDamage = (source, target) => ((float)source.GetSpellDamage(target, SpellSlot.Q)),
             };
             AttackPassives.Add(p);
 
@@ -255,7 +229,7 @@ namespace LeagueSharp.Common
                         (float)
                             source.CalcDamage(
                                 target, DamageType.Magical,
-                                (float) 0.15 * source.FlatMagicDamageMod +
+                                (float)0.15 * source.FlatMagicDamageMod +
                                 new float[] { 10, 10, 10, 18, 18, 18, 26, 26, 26, 34, 34, 34, 42, 42, 42, 50, 50, 50 }[
                                     source.Level - 1]),
             };
@@ -288,7 +262,7 @@ namespace LeagueSharp.Common
                 IsActive = (source, target) => (source.HasBuff("Pick A Card Blue")),
                 GetDamage =
                     (source, target) =>
-                        (float) source.GetSpellDamage(target, SpellSlot.W) -
+                        (float)source.GetSpellDamage(target, SpellSlot.W) -
                         (float)
                             source.CalcDamage(
                                 target, DamageType.Physical, (source.BaseAttackDamage + source.FlatPhysicalDamageMod)),
@@ -299,7 +273,7 @@ namespace LeagueSharp.Common
             {
                 ChampionName = "TwistedFate",
                 IsActive = (source, target) => (source.HasBuff("CardMasterStackParticle")),
-                GetDamage = (source, target) => (float) source.GetSpellDamage(target, SpellSlot.E),
+                GetDamage = (source, target) => (float)source.GetSpellDamage(target, SpellSlot.E),
             };
             AttackPassives.Add(p);
 
@@ -311,7 +285,7 @@ namespace LeagueSharp.Common
             {
                 ChampionName = "Varus",
                 IsActive = (source, target) => (source.HasBuff("VarusW")),
-                GetDamage = (source, target) => ((float) source.GetSpellDamage(target, SpellSlot.W)),
+                GetDamage = (source, target) => ((float)source.GetSpellDamage(target, SpellSlot.W)),
             };
             AttackPassives.Add(p);
 
@@ -323,7 +297,7 @@ namespace LeagueSharp.Common
             {
                 ChampionName = "Vayne",
                 IsActive = (source, target) => (source.HasBuff("VayneTumble")),
-                GetDamage = (source, target) => ((float) source.GetSpellDamage(target, SpellSlot.Q)),
+                GetDamage = (source, target) => ((float)source.GetSpellDamage(target, SpellSlot.Q)),
             };
             AttackPassives.Add(p);
 
@@ -334,7 +308,7 @@ namespace LeagueSharp.Common
                     (source, target) =>
                         (from buff in target.Buffs where buff.DisplayName == "VayneSilverDebuff" select buff.Count)
                             .FirstOrDefault() == 2,
-                GetDamage = (source, target) => ((float) source.GetSpellDamage(target, SpellSlot.W)),
+                GetDamage = (source, target) => ((float)source.GetSpellDamage(target, SpellSlot.W)),
             };
             AttackPassives.Add(p);
 
@@ -351,9 +325,8 @@ namespace LeagueSharp.Common
                         (float)
                             source.CalcDamage(
                                 target, DamageType.Magical,
-                                (float) 0.25d * source.FlatMagicDamageMod +
-                                new float[]
-                                { 20, 24, 28, 32, 36, 40, 48, 56, 64, 72, 80, 88, 100, 112, 124, 136, 148, 160 }[
+                                (float)0.25d * source.FlatMagicDamageMod +
+                                new float[] { 20, 24, 28, 32, 36, 40, 48, 56, 64, 72, 80, 88, 100, 112, 124, 136, 148, 160 }[
                                     source.Level - 1]),
             };
             AttackPassives.Add(p);
@@ -5157,23 +5130,21 @@ namespace LeagueSharp.Common
             #endregion
         }
 
-        public static double GetSummonerSpellDamage(this Obj_AI_Hero source,
-            Obj_AI_Base target,
-            SummonerSpell summonerSpell)
+        public static double GetSummonerSpellDamage(this Obj_AI_Hero source, Obj_AI_Base target, SummonerSpell summonerSpell)
         {
             if (summonerSpell == SummonerSpell.Ignite)
             {
                 return 50 + 20 * source.Level - (target.HPRegenRate / 5 * 3);
             }
-
             if (summonerSpell == SummonerSpell.Smite)
             {
-                return
-                    new double[]
-                    { 390, 410, 430, 450, 480, 510, 540, 570, 600, 640, 680, 720, 760, 800, 850, 900, 950, 1000 }[
-                        source.Level - 1];
-            }
+                if (target is Obj_AI_Hero)
+                {
+                    return 20 + 8 * source.Level;
+                }
 
+                return new double[] { 390, 410, 430, 450, 480, 510, 540, 570, 600, 640, 680, 720, 760, 800, 850, 900, 950, 1000 }[source.Level - 1];
+            }
             return 0d;
         }
 
@@ -5203,7 +5174,7 @@ namespace LeagueSharp.Common
                         target, DamageType.Physical, source.BaseAttackDamage + source.FlatPhysicalDamageMod);
                 case DamageItems.LiandrysTorment:
                     var d = target.Health * .2f * 3f;
-                    return (target.CanMove || target.HasBuff("slow", true, true)) ? d : d*2;
+                    return (target.CanMove || target.HasBuff("slow", true, true)) ? d : d * 2;
             }
             return 1d;
         }
@@ -5265,7 +5236,7 @@ namespace LeagueSharp.Common
                 return CalcPhysicalDamage(source, target, result) * k - reduction;
             }
 
-            var targetAsHero = (Obj_AI_Hero) target;
+            var targetAsHero = (Obj_AI_Hero)target;
 
             //Ninja tabi
             if (Items.HasItem(3047, targetAsHero))
@@ -5339,8 +5310,8 @@ namespace LeagueSharp.Common
             if (hero != null)
             {
                 return (from spell in hero.Spellbook.Spells
-                    where String.Equals(spell.Name, spellName, StringComparison.InvariantCultureIgnoreCase)
-                    select GetDamageSpell(hero, target, spell.Slot)).FirstOrDefault();
+                        where String.Equals(spell.Name, spellName, StringComparison.InvariantCultureIgnoreCase)
+                        select GetDamageSpell(hero, target, spell.Slot)).FirstOrDefault();
             }
 
             return null;
@@ -5542,7 +5513,7 @@ namespace LeagueSharp.Common
                 return k;
             }
 
-            var targetAsHero = (Obj_AI_Hero) target;
+            var targetAsHero = (Obj_AI_Hero)target;
 
             //Defensive masteries:
 
@@ -5580,7 +5551,7 @@ namespace LeagueSharp.Common
             if (target is Obj_AI_Minion)
             {
                 if (
-                    ((Obj_AI_Hero) source).Masteries.Any(
+                    ((Obj_AI_Hero)source).Masteries.Any(
                         m => m.Page == MasteryPage.Offense && m.Id == 65 && m.Points == 1))
                 {
                     d = d + 2;
