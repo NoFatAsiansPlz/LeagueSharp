@@ -1,39 +1,10 @@
-﻿#region LICENSE
-
-/*
- Copyright 2014 - 2014 LeagueSharp
- Spell.cs is part of LeagueSharp.Common.
- 
- LeagueSharp.Common is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- LeagueSharp.Common is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with LeagueSharp.Common. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-#endregion
-
-#region
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using SharpDX;
 
-#endregion
-
 namespace LeagueSharp.Common
 {
-    /// <summary>
-    ///     This class allows you to handle the spells easily.
-    /// </summary>
     public class Spell
     {
         public enum CastStates
@@ -190,7 +161,7 @@ namespace LeagueSharp.Common
             ChargedBuffName = buffName;
             ChargedMinRange = minRange;
             ChargedMaxRange = maxRange;
-            ChargeDuration = (int) (deltaT * 1000);
+            ChargeDuration = (int)(deltaT * 1000);
             _chargedCastedT = 0;
 
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Hero_OnProcessSpellCast;
@@ -550,7 +521,7 @@ namespace LeagueSharp.Common
         /// </summary>
         public float GetHealthPrediction(Obj_AI_Base unit)
         {
-            var time = (int) (Delay * 1000 + From.Distance(unit.ServerPosition) / Speed - 100);
+            var time = (int)(Delay * 1000 + From.Distance(unit.ServerPosition) / Speed - 100);
             return HealthPrediction.GetHealthPrediction(unit, time);
         }
 
@@ -601,7 +572,7 @@ namespace LeagueSharp.Common
         /// </summary>
         public float GetDamage(Obj_AI_Base target, int stage = 0)
         {
-            return (float) ObjectManager.Player.GetSpellDamage(target, Slot, stage);
+            return (float)ObjectManager.Player.GetSpellDamage(target, Slot, stage);
         }
 
         /// <summary>
@@ -668,21 +639,6 @@ namespace LeagueSharp.Common
         public bool CanCast(Obj_AI_Base unit)
         {
             return Slot.IsReady() && unit.IsValidTarget(Range);
-        }
-
-        /// <summary>
-        ///     Returns if the point is in range of the spell.
-        /// </summary>
-        [Obsolete("Use IsInRange(Vector3 obj, float range)", false)]
-        public bool InRange(Vector3 point, float r = -1)
-        {
-            return IsInRange(point, r);
-        }
-
-        [Obsolete("Use IsInRange(GameObject obj, float range)", false)]
-        public bool InRange(Obj_AI_Base unit, float r = -1)
-        {
-            return IsInRange(unit, r);
         }
 
         /// <summary>
