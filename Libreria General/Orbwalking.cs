@@ -99,29 +99,14 @@ namespace LeagueSharp.Common
             }
         }
 
-        /// <summary>
-        ///     This event is fired before the player auto attacks.
-        /// </summary>
         public static event BeforeAttackEvenH BeforeAttack;
 
-        /// <summary>
-        ///     This event is fired when a unit is about to auto-attack another unit.
-        /// </summary>
         public static event OnAttackEvenH OnAttack;
 
-        /// <summary>
-        ///     This event is fired after a unit finishes auto-attacking another unit (Only works with player for now).
-        /// </summary>
         public static event AfterAttackEvenH AfterAttack;
 
-        /// <summary>
-        ///     Gets called on target changes
-        /// </summary>
         public static event OnTargetChangeH OnTargetChange;
 
-        //  <summary>
-        //      Gets called if you can't kill a minion with auto attacks
-        //  </summary>
         public static event OnNonKillableMinionH OnNonKillableMinion;
 
         private static void FireBeforeAttack(AttackableUnit target)
@@ -168,34 +153,22 @@ namespace LeagueSharp.Common
             }
         }
 
-        /// <summary>
-        ///     Returns true if the spellname resets the attack timer.
-        /// </summary>
         public static bool IsAutoAttackReset(string name)
         {
             return AttackResets.Contains(name.ToLower());
         }
 
-        /// <summary>
-        ///     Returns true if the unit is melee
-        /// </summary>
         public static bool IsMelee(this Obj_AI_Base unit)
         {
             return unit.CombatType == GameObjectCombatType.Melee;
         }
 
-        /// <summary>
-        ///     Returns true if the spellname is an auto-attack.
-        /// </summary>
         public static bool IsAutoAttack(string name)
         {
             return (name.ToLower().Contains("attack") && !NoAttacks.Contains(name.ToLower())) ||
                    Attacks.Contains(name.ToLower());
         }
 
-        /// <summary>
-        ///     Returns the auto-attack range.
-        /// </summary>
         public static float GetRealAutoAttackRange(AttackableUnit target)
         {
             var result = Player.AttackRange + Player.BoundingRadius;
@@ -216,9 +189,6 @@ namespace LeagueSharp.Common
             return Vector2.DistanceSquared((target is Obj_AI_Base) ? ((Obj_AI_Base) target).ServerPosition.To2D() : target.Position.To2D(), Player.ServerPosition.To2D()) <= myRange * myRange;
         }
 
-        /// <summary>
-        ///     Returns player auto-attack missile speed.
-        /// </summary>
         public static float GetMyProjectileSpeed()
         {
             return IsMelee(Player) ? float.MaxValue : Player.BasicAttack.MissileSpeed;
@@ -237,9 +207,6 @@ namespace LeagueSharp.Common
             return false;
         }
 
-        /// <summary>
-        ///     Returns true if moving won't cancel the auto-attack.
-        /// </summary>
         public static bool CanMove(float extraWindup)
         {
             if (LastAATick <= Environment.TickCount)
@@ -272,11 +239,7 @@ namespace LeagueSharp.Common
             return LastMoveCommandPosition;
         }
 
-        private static void MoveTo(Vector3 position,
-            float holdAreaRadius = 0,
-            bool overrideTimer = false,
-            bool useFixedDistance = true,
-            bool randomizeMinDistance = true)
+        private static void MoveTo(Vector3 position, float holdAreaRadius = 0, bool overrideTimer = false, bool useFixedDistance = true, bool randomizeMinDistance = true)
         {
             if (Environment.TickCount - LastMoveCommandT < _delay && !overrideTimer)
             {
@@ -447,19 +410,14 @@ namespace LeagueSharp.Common
 
                 /* Misc options */
                 var misc = new Menu("Misc", "Misc");
-                misc.AddItem(
-                    new MenuItem("HoldPosRadius", "Hold Position Radius").SetShared().SetValue(new Slider(0, 0, 150)));
+                misc.AddItem(new MenuItem("HoldPosRadius", "Hold Position Radius").SetShared().SetValue(new Slider(0, 0, 150)));
                 misc.AddItem(new MenuItem("PriorizeFarm", "Priorize farm over harass").SetShared().SetValue(true));
                 _config.AddSubMenu(misc);
 
-
                 /* Delay sliders */
-                _config.AddItem(
-                    new MenuItem("ExtraWindup", "Extra windup time").SetShared().SetValue(new Slider(80, 0, 200)));
-                _config.AddItem(new MenuItem("FarmDelay", "Farm delay").SetShared().SetValue(new Slider(0, 0, 200)));
-                _config.AddItem(
-                    new MenuItem("MovementDelay", "Movement delay").SetShared().SetValue(new Slider(80, 0, 150)))
-                    .ValueChanged += (sender, args) => SetMovementDelay(args.GetNewValue<Slider>().Value);
+                _config.AddItem(new MenuItem("ExtraWindup", "Extra windup time").SetShared().SetValue(new Slider(65, 0, 200)));
+                _config.AddItem(new MenuItem("FarmDelay", "Farm delay").SetShared().SetValue(new Slider(35, 0, 200)));
+                _config.AddItem( new MenuItem("MovementDelay", "Movement delay").SetShared().SetValue(new Slider(80, 0, 150))).ValueChanged += (sender, args) => SetMovementDelay(args.GetNewValue<Slider>().Value);
 
 
                 /*Load the menu*/
@@ -474,16 +432,9 @@ namespace LeagueSharp.Common
                 Drawing.OnDraw += DrawingOnOnDraw;
             }
 
-            private int FarmDelay()
+            private int FarmDelay
             {
-                if (ObjectManager.Player.ChampionName == "Azir")
-                {
-                    return _config.Item("orb_Misc_Farmdelay").GetValue<Slider>().Value + 50;
-                }
-                else
-                {
-                    return _config.Item("orb_Misc_Farmdelay").GetValue<Slider>().Value;
-                }
+                get { return _config.Item("FarmDelay").GetValue<Slider>().Value; }
             }
 
             public OrbwalkingMode ActiveMode
@@ -561,7 +512,7 @@ namespace LeagueSharp.Common
                                 minion.IsValidTarget() && minion.Team != GameObjectTeam.Neutral &&
                                 InAutoAttackRange(minion) &&
                                 HealthPrediction.LaneClearHealthPrediction(
-                                    minion, (int) ((Player.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay()) <=
+                                    minion, (int) ((Player.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay) <=
                                 Player.GetAutoAttackDamage(minion));
             }
 
@@ -595,7 +546,7 @@ namespace LeagueSharp.Common
                     {
                         var t = (int) (Player.AttackCastDelay * 1000) - 100 + Game.Ping / 2 +
                                 1000 * (int) Player.Distance(minion) / (int) GetMyProjectileSpeed();
-                        var predHealth = HealthPrediction.GetHealthPrediction(minion, t, FarmDelay());
+                        var predHealth = HealthPrediction.GetHealthPrediction(minion, t, FarmDelay);
 
                         if (minion.Team != GameObjectTeam.Neutral && MinionManager.IsMinion(minion, true))
                         {
@@ -671,7 +622,7 @@ namespace LeagueSharp.Common
                         if (_prevMinion.IsValidTarget() && InAutoAttackRange(_prevMinion))
                         {
                             var predHealth = HealthPrediction.LaneClearHealthPrediction(
-                                _prevMinion, (int)((Player.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay());
+                                _prevMinion, (int)((Player.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay);
                             if (predHealth >= 2 * Player.GetAutoAttackDamage(_prevMinion) ||
                                 Math.Abs(predHealth - _prevMinion.Health) < float.Epsilon)
                             {
@@ -684,7 +635,7 @@ namespace LeagueSharp.Common
                                 .Where(minion => minion.IsValidTarget() && InAutoAttackRange(minion))
                             let predHealth =
                                 HealthPrediction.LaneClearHealthPrediction(
-                                    minion, (int)((Player.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay())
+                                    minion, (int)((Player.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay)
                             where
                                 predHealth >= 2 * Player.GetAutoAttackDamage(minion) ||
                                 Math.Abs(predHealth - minion.Health) < float.Epsilon
