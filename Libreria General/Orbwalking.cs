@@ -1,33 +1,8 @@
-﻿#region LICENSE
-
-/*
- Copyright 2014 - 2015 LeagueSharp
- Orbwalking.cs is part of LeagueSharp.Common.
- 
- LeagueSharp.Common is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- LeagueSharp.Common is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with LeagueSharp.Common. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-#endregion
-
-#region
-
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using SharpDX;
 using Color = System.Drawing.Color;
-
-#endregion
 
 namespace LeagueSharp.Common
 {
@@ -100,6 +75,8 @@ namespace LeagueSharp.Common
         private static int _delay = 80;
         private static float _minDistance = 400;
         private static readonly Random _random = new Random(DateTime.Now.Millisecond);
+        public static IEnumerable<Obj_AI_Hero> AllEnemys = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsEnemy);
+        public static IEnumerable<Obj_AI_Hero> AllAllys = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsAlly);
 
         static Orbwalking()
         {
@@ -471,10 +448,7 @@ namespace LeagueSharp.Common
             }
         }
 
-        /// <summary>
-        ///     This class allows you to add an instance of "Orbwalker" to your assembly in order to control the orbwalking in an
-        ///     easy way.
-        /// </summary>
+        
         public class Orbwalker
         {
             private const float LaneClearWaitTimeMod = 2f;
@@ -489,16 +463,10 @@ namespace LeagueSharp.Common
             {
                 _config = attachToMenu;
                 /* Drawings submenu */
-                var drawings = new Menu("Drawings", "drawings");
-                drawings.AddItem(
-                    new MenuItem("AACircle", "AACircle").SetShared()
-                        .SetValue(new Circle(true, Color.FromArgb(255, 255, 0, 255))));
-                drawings.AddItem(
-                    new MenuItem("AACircle2", "Enemy AA circle").SetShared()
-                        .SetValue(new Circle(false, Color.FromArgb(255, 255, 0, 255))));
-                drawings.AddItem(
-                    new MenuItem("HoldZone", "HoldZone").SetShared()
-                        .SetValue(new Circle(false, Color.FromArgb(255, 255, 0, 255))));
+                var drawings = new Menu("Señalizaciones", "Señalizaciones");
+                drawings.AddItem(new MenuItem("AACircle", "Mi Rango Ataque Basico").SetShared().SetValue(new Circle(true, Color.FloralWhite)));
+                drawings.AddItem(new MenuItem("AACircle2", "Rango Ataque Basico Enemigo").SetShared().SetValue(new Circle(false, Color.Pink)));
+                drawings.AddItem(new MenuItem("Matar_Minion", "Señalizar Matar Minion").SetValue(new Circle(true, Color.Lime)));
                 _config.AddSubMenu(drawings);
 
                 /* Misc options */
@@ -519,16 +487,10 @@ namespace LeagueSharp.Common
 
 
                 /*Load the menu*/
-                _config.AddItem(
-                    new MenuItem("LastHit", "Last hit").SetShared().SetValue(new KeyBind('X', KeyBindType.Press)));
-
+                _config.AddItem(new MenuItem("LastHit", "Last hit").SetShared().SetValue(new KeyBind('X', KeyBindType.Press)));
                 _config.AddItem(new MenuItem("Farm", "Mixed").SetShared().SetValue(new KeyBind('C', KeyBindType.Press)));
-
-                _config.AddItem(
-                    new MenuItem("LaneClear", "LaneClear").SetShared().SetValue(new KeyBind('V', KeyBindType.Press)));
-
-                _config.AddItem(
-                    new MenuItem("Orbwalk", "Combo").SetShared().SetValue(new KeyBind(32, KeyBindType.Press)));
+                _config.AddItem(new MenuItem("LaneClear", "LaneClear").SetShared().SetValue(new KeyBind('V', KeyBindType.Press)));
+                _config.AddItem(new MenuItem("Orbwalk", "Combo").SetShared().SetValue(new KeyBind(32, KeyBindType.Press)));
 
 
                 Player = ObjectManager.Player;
@@ -786,27 +748,27 @@ namespace LeagueSharp.Common
             {
                 if (_config.Item("AACircle").GetValue<Circle>().Active)
                 {
-                    Render.Circle.DrawCircle(
-                        Player.Position, GetRealAutoAttackRange(null) + 65,
-                        _config.Item("AACircle").GetValue<Circle>().Color);
+                    Render.Circle.DrawCircle(Player.Position, GetRealAutoAttackRange(null) + 65, _config.Item("AACircle").GetValue<Circle>().Color);
                 }
 
                 if (_config.Item("AACircle2").GetValue<Circle>().Active)
                 {
-                    foreach (var target in
-                        ObjectManager.Get<Obj_AI_Hero>().Where(target => target.IsValidTarget(1175)))
+                    foreach (var enemy in AllEnemys.Where(enemy => enemy.IsValidTarget(1500)))
                     {
-                        Render.Circle.DrawCircle(
-                            target.Position, GetRealAutoAttackRange(target) + 65,
-                            _config.Item("AACircle2").GetValue<Circle>().Color);
+                        Render.Circle.DrawCircle(enemy.Position, GetRealAutoAttackRange(enemy), _config.Item("AACircle2").GetValue<Circle>().Color);
                     }
                 }
 
-                if (_config.Item("HoldZone").GetValue<Circle>().Active)
+                if (_config.Item("Matar_Minion").GetValue<Circle>().Active)
                 {
-                    Render.Circle.DrawCircle(
-                        Player.Position, _config.Item("HoldPosRadius").GetValue<Slider>().Value,
-                        _config.Item("HoldZone").GetValue<Circle>().Color);
+                    var minionList = MinionManager.GetMinions(Player.Position, GetRealAutoAttackRange(null) + 500, MinionTypes.All, MinionTeam.Enemy, MinionOrderTypes.MaxHealth);
+                    foreach (var minion in minionList.Where(minion => minion.IsValidTarget(GetRealAutoAttackRange(null) + 500)))
+                    {
+                        if (_config.Item("Matar_Minion").GetValue<Circle>().Active && minion.Health <= Player.GetAutoAttackDamage(minion, true))
+                        {
+                            Render.Circle.DrawCircle(minion.Position, minion.BoundingRadius, _config.Item("Matar_Minion").GetValue<Circle>().Color);
+                        }
+                    }
                 }
             }
         }

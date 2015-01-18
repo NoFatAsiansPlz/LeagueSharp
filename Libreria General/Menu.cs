@@ -238,10 +238,10 @@ namespace LeagueSharp.Common
                 Drawing.Direct3DDevice,
                 new FontDescription
                 {
-                    FaceName = "Tahoma",
+                    FaceName = "comic",
                     Height = 14,
                     OutputPrecision = FontPrecision.Default,
-                    Quality = FontQuality.Antialiased,
+                    Quality = FontQuality.NonAntialiased,
                 });
 
             Drawing.OnPreReset += Drawing_OnPreReset;
