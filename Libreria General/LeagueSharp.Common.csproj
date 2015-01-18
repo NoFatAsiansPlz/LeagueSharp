@@ -7,8 +7,8 @@
     <ProjectGuid>{21D7E4EF-319E-4AD4-A59C-45AF22072DCA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LibreriaGeneral</RootNamespace>
-    <AssemblyName>Libreria General</AssemblyName>
+    <RootNamespace>LeagueSharp.Common</RootNamespace>
+    <AssemblyName>LeagueSharp.Common</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PreBuildEvent />
@@ -77,6 +77,9 @@
     <Reference Include="LeagueSharp">
       <HintPath>..\..\..\..\LeagueSharp\System\LeagueSharp.dll</HintPath>
     </Reference>
+    <Reference Include="LeagueSharp.Common">
+      <HintPath>..\..\..\..\LeagueSharp\System\LeagueSharp.Common.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX">
       <HintPath>..\..\..\..\LeagueSharp\System\SharpDX.dll</HintPath>
     </Reference>
@@ -137,7 +140,6 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
