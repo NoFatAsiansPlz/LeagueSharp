@@ -32,8 +32,7 @@ namespace LeagueSharp.Common
 
         public void Update()
         {
-            if (HechizoPrioritarioLista.Count == 0 || !_Menu.Item(ObjectManager.Player.ChampionName).GetValue<bool>() ||
-                _SiguienteNivel == ObjectManager.Player.Level)
+            if (HechizoPrioritarioLista.Count == 0 || !_Menu.Item(ObjectManager.Player.ChampionName).GetValue<bool>() || _SiguienteNivel == ObjectManager.Player.Level)
             {
                 return;
             }
@@ -49,9 +48,7 @@ namespace LeagueSharp.Common
             {
                 return;
             }
-
             var level = new[] { 0, 0, 0, 0 };
-
             for (var i = 0; i < ObjectManager.Player.Level; i++)
             {
                 level[_HechizoPrioritario[i] - 1] = level[_HechizoPrioritario[i] - 1] + 1;
