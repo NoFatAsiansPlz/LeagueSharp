@@ -126,6 +126,7 @@
     </Compile>
     <Compile Include="Render.cs" />
     <Compile Include="Spell.cs" />
+	<Compile Include="SubirHechizos.cs" />
     <Compile Include="TargetSelector.cs" />
     <Compile Include="MultiLanguage.cs" />
     <Compile Include="Utility.cs" />
