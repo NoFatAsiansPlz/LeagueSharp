@@ -2326,47 +2326,38 @@ namespace LeagueSharp.Common
                     },
                 });
 
-            Spells.Add(
-                "LeBlanc", new List<DamageSpell>
-                {
-                    //Q
-                    new DamageSpell
-                    {
-                        Slot = SpellSlot.Q,
-                        DamageType = DamageType.Magical,
-                        Damage =
-                            (source, target, level) =>
-                                new double[] { 55, 80, 105, 130, 155 }[level] + 0.4 * source.FlatMagicDamageMod
-                    },
-                    //Q . explosion
-                    new DamageSpell
-                    {
-                        Slot = SpellSlot.Q,
-                        Stage = 1,
-                        DamageType = DamageType.Magical,
-                        Damage =
-                            (source, target, level) =>
-                                new double[] { 55, 80, 105, 130, 155 }[level] + 0.4 * source.FlatMagicDamageMod
-                    },
-                    //W
-                    new DamageSpell
-                    {
-                        Slot = SpellSlot.W,
-                        DamageType = DamageType.Magical,
-                        Damage =
-                            (source, target, level) =>
-                                new double[] { 85, 125, 165, 205, 245 }[level] + 0.6 * source.FlatMagicDamageMod
-                    },
-                    //E
-                    new DamageSpell
-                    {
-                        Slot = SpellSlot.E,
-                        DamageType = DamageType.Magical,
-                        Damage =
-                            (source, target, level) =>
-                                new double[] { 40, 65, 90, 115, 140 }[level] + 0.5 * source.FlatMagicDamageMod
-                    },
-                });
+            Spells.Add("LeBlanc", new List<DamageSpell>
+            {
+                 //Q
+                 new DamageSpell
+                 {
+                     Slot = SpellSlot.Q,
+                     DamageType = DamageType.Magical,
+                     Damage = (source, target, level) => new double[] { 55, 80, 105, 130, 155 }[level] + 0.4 * source.FlatMagicDamageMod
+                 },
+                 //Q . explosion
+                 new DamageSpell
+                 {
+                     Slot = SpellSlot.Q,
+                     Stage = 1,
+                     DamageType = DamageType.Magical,
+                     Damage = (source, target, level) => new double[] { 55, 80, 105, 130, 155 }[level] + 0.4 * source.FlatMagicDamageMod
+                 },
+                 //W
+                 new DamageSpell
+                 {
+                     Slot = SpellSlot.W,
+                     DamageType = DamageType.Magical,
+                     Damage = (source, target, level) => new double[] { 85, 125, 165, 205, 245 }[level] + 0.6 * source.FlatMagicDamageMod
+                 },
+                 //E
+                 new DamageSpell
+                 {
+                     Slot = SpellSlot.E,
+                     DamageType = DamageType.Magical,
+                     Damage = (source, target, level) => new double[] { 40, 65, 90, 115, 140 }[level] + 0.5 * source.FlatMagicDamageMod
+                 },
+            });
 
             Spells.Add(
                 "LeeSin", new List<DamageSpell>
