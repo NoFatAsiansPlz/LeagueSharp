@@ -8,9 +8,6 @@ namespace LeagueSharp.Common
 {
     public static class Orbwalking
     {
-        private static Spell PrediccionDeMovimiento;
-        private static Menu _config;
-
         public delegate void AfterAttackEvenH(AttackableUnit unit, AttackableUnit target);
 
         public delegate void BeforeAttackEvenH(BeforeAttackEventArgs args);
@@ -75,6 +72,7 @@ namespace LeagueSharp.Common
         private static readonly Random _random = new Random(DateTime.Now.Millisecond);
         public static IEnumerable<Obj_AI_Hero> AllEnemys = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsEnemy);
         public static IEnumerable<Obj_AI_Hero> AllAllys = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsAlly);
+        private static Spell PrediccionDeMovimiento;
 
         static Orbwalking()
         {
@@ -396,11 +394,12 @@ namespace LeagueSharp.Common
             private Vector3 _orbwalkingPoint;
             private Obj_AI_Minion _prevMinion;
             private readonly Obj_AI_Hero Player;
+            private static Menu _config;
 
             public Orbwalker(Menu attachToMenu)
             {
-                PrediccionDeMovimiento = new Spell(SpellSlot.Unknown, GetRealAutoAttackRange(null));
-                PrediccionDeMovimiento.SetTargetted(Player.BasicAttack.SpellCastTime, Player.BasicAttack.MissileSpeed);
+               // PrediccionDeMovimiento = new Spell(SpellSlot.Unknown, GetRealAutoAttackRange(null));
+               // PrediccionDeMovimiento.SetTargetted(Player.BasicAttack.SpellCastTime, Player.BasicAttack.MissileSpeed);
 
                 _config = attachToMenu;
                 /* Drawings submenu */
