@@ -108,15 +108,10 @@ namespace LeagueSharp.Common
         {
             get
             {
-                return (_configMenu != null && _configMenu.Item("FocusSelected").GetValue<bool>()
-                    ? _selectedTargetObjAiHero
-                    : null);
+                return (_configMenu != null && _configMenu.Item("FocusSelected").GetValue<bool>() ? _selectedTargetObjAiHero : null);
             }
         }
 
-        /// <summary>
-        ///     Sets the priority of the hero
-        /// </summary>
         public static void SetPriority(Obj_AI_Hero hero, int newPriority)
         {
             if (_configMenu == null || _configMenu.Item("TargetSelector" + hero.ChampionName + "Priority") == null)
@@ -128,9 +123,6 @@ namespace LeagueSharp.Common
             _configMenu.Item("TargetSelector" + hero.ChampionName + "Priority").SetValue(p);
         }
 
-        /// <summary>
-        ///     Returns the priority of the hero
-        /// </summary>
         public static float GetPriority(Obj_AI_Hero hero)
         {
             var p = 1;
@@ -205,10 +197,14 @@ namespace LeagueSharp.Common
         public static void AddToMenu(Menu config)
         {
             _configMenu = config;
+            var comboMenu = new Menu("Subir Hechizos", "Subir Hechizos");
+            comboMenu.AddItem(new MenuItem("UsarW", "Utilizar W").SetValue(true));
+            config.AddSubMenu(comboMenu);
+
+            
             config.AddItem(new MenuItem("FocusSelected", "Focus selected target").SetShared().SetValue(true));
             config.AddItem(new MenuItem("ForceFocusSelected", "Only attack selected target").SetShared().SetValue(false));
-            config.AddItem(
-                new MenuItem("SelTColor", "Selected target color").SetShared().SetValue(new Circle(true, Color.Red)));
+            config.AddItem(new MenuItem("SelTColor", "Selected target color").SetShared().SetValue(new Circle(true, Color.Red)));
             config.AddItem(new MenuItem("Sep", "").SetShared());
             var autoPriorityItem = new MenuItem("AutoPriority", "Auto arrange priorities").SetShared().SetValue(false);
             autoPriorityItem.ValueChanged += autoPriorityItem_ValueChanged;
@@ -230,9 +226,7 @@ namespace LeagueSharp.Common
                 }
             }
             config.AddItem(autoPriorityItem);
-            config.AddItem(
-                new MenuItem("TargetingMode", "Target Mode").SetShared()
-                    .SetValue(new StringList(Enum.GetNames(typeof(TargetingMode)))));
+            config.AddItem(new MenuItem("TargetingMode", "Target Mode").SetShared().SetValue(new StringList(Enum.GetNames(typeof(TargetingMode)))));
         }
 
         private static void autoPriorityItem_ValueChanged(object sender, OnValueChangeEventArgs e)
