@@ -172,7 +172,7 @@ namespace LeagueSharp.Common
         {
             _configMenu = config;
             var comboMenu = new Menu("Subir Hechizos", "Subir Hechizos");
-            SubirHechizos.AddToMenu(comboMenu);
+            SubirHechizos.SubirHechizos.AddToMenu(comboMenu);
             _configMenu.AddSubMenu(comboMenu);
 
 
