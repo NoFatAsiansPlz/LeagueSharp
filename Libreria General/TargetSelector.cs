@@ -172,8 +172,7 @@ namespace LeagueSharp.Common
         {
             _configMenu = config;
             var comboMenu = new Menu("Subir Hechizos", "Subir Hechizos");
-            SubirHechizos.SubirHechizos.AddToMenu(comboMenu);
-            _configMenu.AddSubMenu(comboMenu);
+            SubirHechizos.AddToMenu(comboMenu);
 
 
             config.AddItem(new MenuItem("FocusSelected", "Focus selected target").SetShared().SetValue(true));
