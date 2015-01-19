@@ -8,14 +8,11 @@ namespace LeagueSharp.Common
 {
     public static class Orbwalking
     {
+        private static Menu _config; 
         public delegate void AfterAttackEvenH(AttackableUnit unit, AttackableUnit target);
-
         public delegate void BeforeAttackEvenH(BeforeAttackEventArgs args);
-
         public delegate void OnAttackEvenH(AttackableUnit unit, AttackableUnit target);
-
         public delegate void OnNonKillableMinionH(AttackableUnit minion);
-
         public delegate void OnTargetChangeH(AttackableUnit oldTarget, AttackableUnit newTarget);
 
         public enum OrbwalkingMode
@@ -294,7 +291,7 @@ namespace LeagueSharp.Common
                         return;
                     }
                 }
-                if (Player.IsMelee() && target != null && mienemigo.Distance(Player) < GetRealAutoAttackRange(mienemigo) && _config.Item("Prediccion_Personajes_Melee").GetValue<bool>() && target is Obj_AI_Hero && Game.CursorPos.Distance(target.Position) < 300)
+                if (Player.IsMelee() && target != null && mienemigo.Distance(Player) < GetRealAutoAttackRange(mienemigo) &&  _config.Item("Prediccion_Personajes_Melee").GetValue<bool>() && target is Obj_AI_Hero && Game.CursorPos.Distance(target.Position) < 300)
                 {
                     PrediccionDeMovimiento.Delay = Player.BasicAttack.SpellCastTime;
                     PrediccionDeMovimiento.Speed = Player.BasicAttack.MissileSpeed;
@@ -394,7 +391,6 @@ namespace LeagueSharp.Common
             private Vector3 _orbwalkingPoint;
             private Obj_AI_Minion _prevMinion;
             private readonly Obj_AI_Hero Player;
-            private static Menu _config;
 
             public Orbwalker(Menu attachToMenu)
             {
