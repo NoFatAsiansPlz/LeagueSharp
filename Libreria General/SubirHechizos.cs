@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LeagueSharp.Common
 {
-    public static class SubirHechizos
+    public class SubirHechizos
     {
         private static int[] _HechizoPrioritario;
         private static int _SiguienteNivel = 0;
