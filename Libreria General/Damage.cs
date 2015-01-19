@@ -44,11 +44,9 @@ namespace LeagueSharp.Common
             Smite,
         }
 
-        public static Dictionary<string, List<DamageSpell>> Spells =
-            new Dictionary<string, List<DamageSpell>>(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, List<DamageSpell>> Spells = new Dictionary<string, List<DamageSpell>>(StringComparer.OrdinalIgnoreCase);
 
         private static readonly List<PassiveDamage> AttackPassives = new List<PassiveDamage>();
-        //attack passives are handled in the orbwalker, it will be changed in the future :^)
 
         static Damage()
         {
@@ -75,16 +73,11 @@ namespace LeagueSharp.Common
             {
                 ChampionName = "Alistar",
                 IsActive = (source, target) => (source.HasBuff("Trample")),
-                GetDamage =
-                    (source, target) =>
-                        ((float)
-                            source.CalcDamage(
-                                target, DamageType.Magical, 6d + source.Level + (0.1d * source.FlatMagicDamageMod))),
+                GetDamage = (source, target) => ((float) source.CalcDamage(target, DamageType.Magical, 6d + source.Level + (0.1d * source.FlatMagicDamageMod))),
             };
             AttackPassives.Add(p);
 
             #endregion
-
 
             #region Caitlyn
 

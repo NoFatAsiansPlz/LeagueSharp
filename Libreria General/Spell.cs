@@ -25,9 +25,7 @@ namespace LeagueSharp.Common
         private Vector3 _rangeCheckFrom;
         private float _width;
 
-        public Spell(SpellSlot slot,
-            float range = float.MaxValue,
-            TargetSelector.DamageType damageType = TargetSelector.DamageType.Physical)
+        public Spell(SpellSlot slot, float range = float.MaxValue, TargetSelector.DamageType damageType = TargetSelector.DamageType.Physical)
         {
             Slot = slot;
             Range = range;

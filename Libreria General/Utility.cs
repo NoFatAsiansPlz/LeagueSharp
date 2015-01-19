@@ -1,62 +1,23 @@
-﻿#region LICENSE
-
-/*
- Copyright 2014 - 2015 LeagueSharp
- Utility.cs is part of LeagueSharp.Common.
- 
- LeagueSharp.Common is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- LeagueSharp.Common is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with LeagueSharp.Common. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-#endregion
-
-#region
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using SharpDX;
 using Color = System.Drawing.Color;
 
-#endregion
-
 namespace LeagueSharp.Common
 {
-    /// <summary>
-    ///     Game functions related utilities.
-    /// </summary>
     public static class Utility
     {
-        /// <summary>
-        ///     Searches for an element that matches the conditions defined by the specified predicate, and returns the first
-        ///     occurrence within the entire IEnumerable.
-        /// </summary>
         public static TSource Find<TSource>(this IEnumerable<TSource> source, Predicate<TSource> match)
         {
             return (source as List<TSource> ?? source.ToList()).Find(match);
         }
 
-        /// <summary>
-        ///     Retrieves all the elements that match the conditions defined by the specified predicate.
-        /// </summary>
-        public static List<TSource> FindAll<TSource>(this IEnumerable<TSource> source, Predicate<TSource> match)
+         public static List<TSource> FindAll<TSource>(this IEnumerable<TSource> source, Predicate<TSource> match)
         {
             return (source as List<TSource> ?? source.ToList()).FindAll(match);
         }
 
-        /// <summary>
-        ///     Returns if the source is facing the target.
-        /// </summary>
         [Obsolete("The optional parameter lineLength will be removed, please avoid using it :-)", false)]
         public static bool IsFacing(this Obj_AI_Base source, Obj_AI_Base target, float lineLength = 300)
         {
@@ -69,22 +30,13 @@ namespace LeagueSharp.Common
             return source.Direction.To2D().AngleBetween((target.Position - source.Position).To2D()) < angle;
         }
 
-        /// <summary>
-        ///     Returns if both source and target are Facing Themselves.
-        /// </summary>
         [Obsolete("The optional parameter lineLength will be removed, please avoid using it :-)", false)]
         public static bool IsBothFacing(Obj_AI_Base source, Obj_AI_Base target, float lineLength = 1337)
         {
             return source.IsFacing(target) && target.IsFacing(source);
         }
 
-        /// <summary>
-        ///     Returns if the target is valid (not dead, targetable, visible...).
-        /// </summary>
-        public static bool IsValidTarget(this AttackableUnit unit,
-            float range = float.MaxValue,
-            bool checkTeam = true,
-            Vector3 from = new Vector3())
+        public static bool IsValidTarget(this AttackableUnit unit, float range = float.MaxValue, bool checkTeam = true, Vector3 from = new Vector3())
         {
             if (unit == null || !unit.IsValid || unit.IsDead || !unit.IsVisible || !unit.IsTargetable ||
                 unit.IsInvulnerable)
@@ -111,9 +63,6 @@ namespace LeagueSharp.Common
             return hero.Spellbook.GetSpell(slot);
         }
 
-        /// <summary>
-        ///     Returns if the spell is ready to use.
-        /// </summary>
         public static bool IsReady(this SpellDataInst spell, int t = 0)
         {
             return spell != null && spell.Slot != SpellSlot.Unknown && t == 0
@@ -316,48 +265,31 @@ namespace LeagueSharp.Common
             {
                 return null;
             }
-
             var result = new List<Vector2Time>();
             var speed = unit.MoveSpeed;
             var lastPoint = wp[0];
-
+            var time = 0f;
             foreach (var point in wp)
             {
-                result.Add(new Vector2Time(point, point.Distance(lastPoint) / speed));
+                time += point.Distance(lastPoint) / speed;
+                result.Add(new Vector2Time(point, time));
                 lastPoint = point;
             }
-
             return result;
         }
 
-        /// <summary>
-        ///     Returns if the unit has the buff and it is active
-        /// </summary>
-        public static bool HasBuff(this Obj_AI_Base unit,
-            string buffName,
-            bool dontUseDisplayName = false,
-            bool ignoreCase = false)
+        public static bool HasBuff(this Obj_AI_Base unit, string buffName, bool dontUseDisplayName = false, bool ignoreCase = false)
         {
             var name = ignoreCase ? buffName.ToLower() : buffName;
-            return
-                unit.Buffs.Any(
-                    buff =>
-                        ((dontUseDisplayName && buff.Name == name) || (!dontUseDisplayName && buff.DisplayName == name)) &&
-                        buff.IsActive && buff.EndTime - Game.Time > 0);
+            return unit.Buffs.Any(buff => ((dontUseDisplayName && buff.Name == name) || (!dontUseDisplayName && buff.DisplayName == name)) && buff.IsActive && buff.EndTime - Game.Time > 0);
         }
 
-        /// <summary>
-        ///     Returns the spell slot with the name.
-        /// </summary>
         public static SpellSlot GetSpellSlot(this Obj_AI_Hero unit, string name)
         {
-            foreach (var spell in
-                unit.Spellbook.Spells.Where(
-                    spell => String.Equals(spell.Name, name, StringComparison.CurrentCultureIgnoreCase)))
+            foreach (var spell in unit.Spellbook.Spells.Where(spell => String.Equals(spell.Name, name, StringComparison.CurrentCultureIgnoreCase)))
             {
                 return spell.Slot;
             }
-
             return SpellSlot.Unknown;
         }
 
