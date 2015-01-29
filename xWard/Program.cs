@@ -74,7 +74,7 @@ namespace xWard
             }
             if (Menu.Item("Posicion").GetValue<KeyBind>().Active)
             {
-                Game.PrintChat(ObjectManager.Player.Position.ToString());
+                Game.PrintChat(ObjectManager.Player.Position.X.ToString() + " - " + ObjectManager.Player.Position.Y.ToString() + " - " + ObjectManager.Player.Position.Z.ToString());
             }
         }
 
@@ -93,8 +93,6 @@ namespace xWard
                 Render.Circle.DrawCircle(new Vector3(5583.74f, 3573.83f, 51.43f), 125f, Color.Blue);// Blue Riveer Center Close
 
                 Render.Circle.DrawCircle(new Vector3(4749.79f, 5890.76f, 53.59f), 125f, Color.Blue);// Blue Mid T1
-                Render.Circle.DrawCircle(new Vector3(5983.58f, 1547.98f, 52.99f), 125f, Color.Blue);// Blue Bot T2
-                Render.Circle.DrawCircle(new Vector3(1213.70f, 5324.73f, 58.77f), 125f, Color.Blue);// Blue Top T2
             }
             if (Menu.Item("DibujarRojo").GetValue<bool>())
             {
@@ -147,7 +145,6 @@ namespace xWard
                 TrinketN.Cast(new Vector3(8223.67f, 8110.15f, 60.0f));   // Purple Nidlane
                 TrinketN.Cast(new Vector3(9736.8f, 6916.26f, 51.98f));   // Purple Mid Path
             }
-
             if (SightStone.IsReady())
             {
                 SightStone.Cast(new Vector3(11600.35f, 7090.37f, 51.73f));// Red Golem
@@ -168,7 +165,6 @@ namespace xWard
                 SightStone.Cast(new Vector3(8223.67f, 8110.15f, 60.0f));   // Purple Nidlane
                 SightStone.Cast(new Vector3(9736.8f, 6916.26f, 51.98f));   // Purple Mid Path
             }
-
             if (WardS.IsReady())
             {
                 WardS.Cast(new Vector3(11600.35f, 7090.37f, 51.73f));// Red Golem
@@ -189,8 +185,6 @@ namespace xWard
                 WardS.Cast(new Vector3(8223.67f, 8110.15f, 60.0f));   // Purple Nidlane
                 WardS.Cast(new Vector3(9736.8f, 6916.26f, 51.98f));   // Purple Mid Path
             }
-
-
             if (WardN.IsReady())
             {
                 WardN.Cast(new Vector3(11600.35f, 7090.37f, 51.73f));// Red Golem
@@ -228,10 +222,7 @@ namespace xWard
                 TrinketN.Cast(new Vector3(5583.74f, 3573.83f, 51.43f));// Blue Riveer Center Close
 
                 TrinketN.Cast(new Vector3(4749.79f, 5890.76f, 53.59f));// Blue Mid T1
-                TrinketN.Cast(new Vector3(5983.58f, 1547.98f, 52.99f));// Blue Bot T2
-                TrinketN.Cast(new Vector3(1213.70f, 5324.73f, 58.77f));// Blue Top T2
             }
-
             if (SightStone.IsReady())
             {
                 SightStone.Cast(new Vector3(3261.93f, 7773.65f, 60.0f));// Blue Golem
@@ -248,7 +239,6 @@ namespace xWard
                 SightStone.Cast(new Vector3(5983.58f, 1547.98f, 52.99f));// Blue Bot T2
                 SightStone.Cast(new Vector3(1213.70f, 5324.73f, 58.77f));// Blue Top T2
             }
-
             if (WardS.IsReady())
             {
                 WardS.Cast(new Vector3(3261.93f, 7773.65f, 60.0f));// Blue Golem
@@ -265,8 +255,6 @@ namespace xWard
                 WardS.Cast(new Vector3(5983.58f, 1547.98f, 52.99f));// Blue Bot T2
                 WardS.Cast(new Vector3(1213.70f, 5324.73f, 58.77f));// Blue Top T2
             }
-
-
             if (WardN.IsReady())
             {
                 WardN.Cast(new Vector3(3261.93f, 7773.65f, 60.0f));// Blue Golem
@@ -290,19 +278,31 @@ namespace xWard
         {
             if (TrinketN.IsReady())
             {
+                TrinketN.Cast(new Vector3(10546.35f, 5019.06f, -60.0f));// Dragon
+                TrinketN.Cast(new Vector3(9344.95f, 5703.43f, -64.07f));// Dragon Bush
+                TrinketN.Cast(new Vector3(4334.98f, 9714.54f, -60.42f));// Baron
+                TrinketN.Cast(new Vector3(5363.31f, 9157.05f, -62.70f));// Baron Bush
             }
-
             if (SightStone.IsReady())
             {
+                SightStone.Cast(new Vector3(10546.35f, 5019.06f, -60.0f));// Dragon
+                SightStone.Cast(new Vector3(9344.95f, 5703.43f, -64.07f));// Dragon Bush
+                SightStone.Cast(new Vector3(4334.98f, 9714.54f, -60.42f));// Baron
+                SightStone.Cast(new Vector3(5363.31f, 9157.05f, -62.70f));// Baron Bush
             }
-
             if (WardS.IsReady())
             {
+                WardS.Cast(new Vector3(10546.35f, 5019.06f, -60.0f));// Dragon
+                WardS.Cast(new Vector3(9344.95f, 5703.43f, -64.07f));// Dragon Bush
+                WardS.Cast(new Vector3(4334.98f, 9714.54f, -60.42f));// Baron
+                WardS.Cast(new Vector3(5363.31f, 9157.05f, -62.70f));// Baron Bush
             }
-
-
             if (WardN.IsReady())
             {
+                WardN.Cast(new Vector3(10546.35f, 5019.06f, -60.0f));// Dragon
+                WardN.Cast(new Vector3(9344.95f, 5703.43f, -64.07f));// Dragon Bush
+                WardN.Cast(new Vector3(4334.98f, 9714.54f, -60.42f));// Baron
+                WardN.Cast(new Vector3(5363.31f, 9157.05f, -62.70f));// Baron Bush
             }
         }
     }
