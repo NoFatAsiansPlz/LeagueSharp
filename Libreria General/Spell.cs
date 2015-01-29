@@ -30,8 +30,6 @@ namespace LeagueSharp.Common
             Slot = slot;
             Range = range;
             DamageType = damageType;
-
-            // Default values
             MinHitChance = HitChance.High;
         }
 
@@ -159,7 +157,7 @@ namespace LeagueSharp.Common
             ChargedBuffName = buffName;
             ChargedMinRange = minRange;
             ChargedMaxRange = maxRange;
-            ChargeDuration = (int)(deltaT * 1000);
+            ChargeDuration = (int) (deltaT * 1000);
             _chargedCastedT = 0;
 
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Hero_OnProcessSpellCast;
@@ -190,7 +188,7 @@ namespace LeagueSharp.Common
                 _chargedReqSentT = Environment.TickCount;
             }
         }
-
+        
         void Spellbook_OnUpdateChargedSpell(Spellbook sender, SpellbookUpdateChargedSpellEventArgs args)
         {
             if (sender.Owner.IsMe && Environment.TickCount - _chargedReqSentT < 3000)
@@ -205,6 +203,7 @@ namespace LeagueSharp.Common
             {
                 return;
             }
+
             if ((Environment.TickCount - _chargedReqSentT > 500))
             {
                 if (IsCharging)
@@ -372,32 +371,24 @@ namespace LeagueSharp.Common
         }
 
         /// <summary>
-        ///     Self-casts the spell.
-        /// </summary>
-        public bool Cast()
-        {
-            return Slot.IsReady() && ObjectManager.Player.Spellbook.CastSpell(Slot, ObjectManager.Player);
-        }
-
-        /// <summary>
         ///     Casts the targetted spell on the unit.
         /// </summary>
-        public void CastOnUnit(Obj_AI_Base unit, bool packetCast = false)
+        public bool CastOnUnit(Obj_AI_Base unit, bool packetCast = false)
         {
             if (!Slot.IsReady() || From.Distance(unit.ServerPosition, true) > RangeSqr)
             {
-                return;
+                return false;
             }
 
             LastCastAttemptT = Environment.TickCount;
 
             if (packetCast)
             {
-                ObjectManager.Player.Spellbook.CastSpell(Slot, unit, false);
+                return ObjectManager.Player.Spellbook.CastSpell(Slot, unit, false);
             }
             else
             {
-                ObjectManager.Player.Spellbook.CastSpell(Slot, unit);
+                return ObjectManager.Player.Spellbook.CastSpell(Slot, unit);
             }
         }
 
@@ -414,17 +405,17 @@ namespace LeagueSharp.Common
         /// </summary>
         public bool Cast(bool packetCast = false)
         {
-            return ObjectManager.Player.Spellbook.CastSpell(Slot, ObjectManager.Player);
+            return CastOnUnit(ObjectManager.Player, packetCast);
         }
 
         public bool Cast(Vector2 fromPosition, Vector2 toPosition)
         {
-            return ObjectManager.Player.Spellbook.CastSpell(Slot, fromPosition.To3D(), toPosition.To3D());
+            return Cast(fromPosition.To3D(), toPosition.To3D());
         }
 
         public bool Cast(Vector3 fromPosition, Vector3 toPosition)
         {
-            return ObjectManager.Player.Spellbook.CastSpell(Slot, fromPosition, toPosition);
+            return Slot.IsReady() && ObjectManager.Player.Spellbook.CastSpell(Slot, fromPosition, toPosition);
         }
 
         /// <summary>
@@ -475,6 +466,9 @@ namespace LeagueSharp.Common
             ObjectManager.Player.Spellbook.UpdateChargedSpell(slot, position, releaseCast, false);
         }
 
+        /// <summary>
+        ///     Casts the spell if the hitchance equals the set hitchance.
+        /// </summary>
         public bool CastIfHitchanceEquals(Obj_AI_Base unit, HitChance hitChance, bool packetCast = false)
         {
             var currentHitchance = MinHitChance;
@@ -484,6 +478,9 @@ namespace LeagueSharp.Common
             return castResult == CastStates.SuccessfullyCasted;
         }
 
+        /// <summary>
+        ///     Casts the spell if it will hit the set targets.
+        /// </summary>
         public bool CastIfWillHit(Obj_AI_Base unit, int minTargets = 5, bool packetCast = false)
         {
             var castResult = _cast(unit, packetCast, true, false, minTargets);
@@ -495,12 +492,12 @@ namespace LeagueSharp.Common
         /// </summary>
         public float GetHealthPrediction(Obj_AI_Base unit)
         {
-            var time = (int)(Delay * 1000 + From.Distance(unit.ServerPosition) / Speed - 100);
+            var time = (int) (Delay * 1000 + From.Distance(unit.ServerPosition) / Speed - 100);
             return HealthPrediction.GetHealthPrediction(unit, time);
         }
 
         public MinionManager.FarmLocation GetCircularFarmLocation(List<Obj_AI_Base> minionPositions,
-            float overrideWidth = float.MaxValue)
+            float overrideWidth = -1)
         {
             var positions = MinionManager.GetMinionsPredictedPositions(
                 minionPositions, Delay, Width, Speed, From, Range, false, SkillshotType.SkillshotCircle);
@@ -546,7 +543,7 @@ namespace LeagueSharp.Common
         /// </summary>
         public float GetDamage(Obj_AI_Base target, int stage = 0)
         {
-            return (float)ObjectManager.Player.GetSpellDamage(target, Slot, stage);
+            return (float) ObjectManager.Player.GetSpellDamage(target, Slot, stage);
         }
 
         /// <summary>

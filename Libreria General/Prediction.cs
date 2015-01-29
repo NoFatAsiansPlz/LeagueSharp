@@ -1,33 +1,7 @@
-﻿#region LICENSE
-
-/*
- Copyright 2014 - 2014 LeagueSharp
- Prediction.cs is part of LeagueSharp.Common.
- 
- LeagueSharp.Common is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- LeagueSharp.Common is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with LeagueSharp.Common. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-#endregion
-
-#region
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using SharpDX;
-
-#endregion
 
 namespace LeagueSharp.Common
 {
@@ -61,39 +35,75 @@ namespace LeagueSharp.Common
 
     public class PredictionInput
     {
+        /// <summary>
+        /// Set to true make the prediction hit as many enemy heroes as posible.
+        /// </summary>
         public bool Aoe = false;
 
+        /// <summary>
+        /// Set to true if the unit collides with units.
+        /// </summary>
         public bool Collision = false;
 
+        /// <summary>
+        /// Array that contains the unit types that the skillshot can collide with.
+        /// </summary>
         public CollisionableObjects[] CollisionObjects =
         {
             CollisionableObjects.Minions, CollisionableObjects.YasuoWall
         };
 
+        /// <summary>
+        /// The skillshot delay in seconds.
+        /// </summary>
         public float Delay = 0f;
 
+        /// <summary>
+        /// The skillshot width's radius or the angle in case of the cone skillshots.
+        /// </summary>
         public float Radius = 1f;
 
+        /// <summary>
+        /// The skillshot range in units.
+        /// </summary>
         public float Range = float.MaxValue;
 
+        /// <summary>
+        /// The skillshot speed in units per second.
+        /// </summary>
         public float Speed = float.MaxValue;
 
+        /// <summary>
+        /// The skillshot type.
+        /// </summary>
         public SkillshotType Type = SkillshotType.SkillshotLine;
 
+        /// <summary>
+        /// The unit that the prediction will made for.
+        /// </summary>
         public Obj_AI_Base Unit = ObjectManager.Player;
 
+        /// <summary>
+        /// Set to true to increase the prediction radius by the unit bounding radius.
+        /// </summary>
         public bool UseBoundingRadius = true;
 
         private Vector3 _from;
 
         private Vector3 _rangeCheckFrom;
 
+        /// <summary>
+        /// The position from where the skillshot missile gets fired.
+        /// </summary>
         public Vector3 From
         {
             get { return _from.To2D().IsValid() ? _from : ObjectManager.Player.ServerPosition; }
             set { _from = value; }
         }
 
+        /// <summary>
+        /// The position from where the range is checked.
+        /// </summary>
         public Vector3 RangeCheckFrom
         {
             get
@@ -113,10 +123,19 @@ namespace LeagueSharp.Common
 
     public class PredictionOutput
     {
+        /// <summary>
+        /// The list of the targets that the spell will hit (only if aoe was enabled).
+        /// </summary>
         public List<Obj_AI_Hero> AoeTargetsHit = new List<Obj_AI_Hero>();
 
+        /// <summary>
+        /// The list of the units that the skillshot will collide with.
+        /// </summary>
         public List<Obj_AI_Base> CollisionObjects = new List<Obj_AI_Base>();
 
+        /// <summary>
+        /// Returns the hitchance.
+        /// </summary>
         public HitChance Hitchance = HitChance.Impossible;
 
         internal PredictionInput Input;

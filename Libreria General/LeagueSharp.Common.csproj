@@ -72,16 +72,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="clipper_library">
-      <HintPath>..\..\..\..\..\Desktop\LeagueSharpLoader\bin\Release\System\clipper_library.dll</HintPath>
+      <HintPath>C:\Users\Alvaro\Documents\LeagueSharp\\System\clipper_library.dll</HintPath>
     </Reference>
     <Reference Include="LeagueSharp">
-      <HintPath>C:\Program Files (x86)\LeagueSharp\\System\LeagueSharp.dll</HintPath>
+      <HintPath>C:\Users\Alvaro\Documents\LeagueSharp\\System\LeagueSharp.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>C:\Program Files (x86)\LeagueSharp\\System\SharpDX.dll</HintPath>
+      <HintPath>C:\Users\Alvaro\Documents\LeagueSharp\\System\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
-      <HintPath>C:\Program Files (x86)\LeagueSharp\\System\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>C:\Users\Alvaro\Documents\LeagueSharp\\System\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -103,6 +103,8 @@
     <Compile Include="Config.cs" />
     <Compile Include="Damage.cs" />
     <Compile Include="Dash.cs" />
+    <Compile Include="Data\ItemData.cs" />
+    <Compile Include="Data\MasteryData.cs" />
     <Compile Include="GamePacket.cs" />
     <Compile Include="ItemData.cs" />
     <Compile Include="Global.cs" />
@@ -126,7 +128,6 @@
     </Compile>
     <Compile Include="Render.cs" />
     <Compile Include="Spell.cs" />
-	<Compile Include="SubirHechizos.cs" />
     <Compile Include="TargetSelector.cs" />
     <Compile Include="MultiLanguage.cs" />
     <Compile Include="Utility.cs" />

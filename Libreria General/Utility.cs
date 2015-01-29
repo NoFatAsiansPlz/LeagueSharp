@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LeagueSharp.Common.Data;
 using SharpDX;
 using Color = System.Drawing.Color;
 
@@ -8,16 +9,6 @@ namespace LeagueSharp.Common
 {
     public static class Utility
     {
-        public static TSource Find<TSource>(this IEnumerable<TSource> source, Predicate<TSource> match)
-        {
-            return (source as List<TSource> ?? source.ToList()).Find(match);
-        }
-
-        public static List<TSource> FindAll<TSource>(this IEnumerable<TSource> source, Predicate<TSource> match)
-        {
-            return (source as List<TSource> ?? source.ToList()).FindAll(match);
-        }
-
         public static bool IsFacing(this Obj_AI_Base source, Obj_AI_Base target)
         {
             if (source == null || target == null)
@@ -41,13 +32,19 @@ namespace LeagueSharp.Common
             {
                 return false;
             }
+
             if (checkTeam && unit.Team == ObjectManager.Player.Team)
             {
                 return false;
             }
+
             var @base = unit as Obj_AI_Base;
             var unitPosition = @base != null ? @base.ServerPosition : unit.Position;
-            return !(range < float.MaxValue) || !(Vector2.DistanceSquared((@from.To2D().IsValid() ? @from : ObjectManager.Player.ServerPosition).To2D(),unitPosition.To2D()) > range * range);
+
+            return !(range < float.MaxValue) ||
+                   !(Vector2.DistanceSquared(
+                       (@from.To2D().IsValid() ? @from : ObjectManager.Player.ServerPosition).To2D(),
+                       unitPosition.To2D()) > range * range);
         }
 
         public static SpellDataInst GetSpell(this Obj_AI_Hero hero, SpellSlot slot)
@@ -57,7 +54,10 @@ namespace LeagueSharp.Common
 
         public static bool IsReady(this SpellDataInst spell, int t = 0)
         {
-            return spell != null && spell.Slot != SpellSlot.Unknown && t == 0 ? spell.State == SpellState.Ready : (spell.State == SpellState.Ready || (spell.State == SpellState.Cooldown && (spell.CooldownExpires - Game.Time) <= t / 1000f));
+            return spell != null && spell.Slot != SpellSlot.Unknown && t == 0
+                ? spell.State == SpellState.Ready
+                : (spell.State == SpellState.Ready ||
+                   (spell.State == SpellState.Cooldown && (spell.CooldownExpires - Game.Time) <= t / 1000f));
         }
 
         public static bool IsReady(this Spell spell, int t = 0)
@@ -67,12 +67,13 @@ namespace LeagueSharp.Common
 
         public static bool IsReady(this SpellSlot slot, int t = 0)
         {
-            return IsReady(ObjectManager.Player.Spellbook.GetSpell(slot), t);
+            var s = ObjectManager.Player.Spellbook.GetSpell(slot);
+            return s != null && IsReady(s, t);
         }
 
-        public static bool IsValid<T>(this GameObject obj)
+        public static bool IsValid<T>(this GameObject obj) where T : GameObject
         {
-            return obj is T && obj.IsValid;
+            return obj as T != null && obj.IsValid;
         }
 
         public static bool IsValidSlot(this InventorySlot slot)
@@ -153,6 +154,11 @@ namespace LeagueSharp.Common
             return position.To3D().IsWall();
         }
 
+        public static bool IsCasted(this Spell.CastStates state)
+        {
+            return state == Spell.CastStates.SuccessfullyCasted;
+        }
+
         public static int GetRecallTime(Obj_AI_Hero obj)
         {
             return GetRecallTime(obj.Spellbook.GetSpell(SpellSlot.Recall).Name);
@@ -166,22 +172,27 @@ namespace LeagueSharp.Common
             {
                 case "recall":
                     duration = 8000;
-                    break;
+                break;
+
                 case "recallimproved":
                     duration = 7000;
-                    break;
+                break;
+
                 case "odinrecall":
                     duration = 4500;
-                    break;
+                break;
+
                 case "odinrecallimproved":
                     duration = 4000;
-                    break;
+                break;
+
                 case "superrecall":
                     duration = 4000;
-                    break;
+                break;
+
                 case "superrecallimproved":
                     duration = 4000;
-                    break;
+                break;
             }
             return duration;
         }
@@ -213,6 +224,9 @@ namespace LeagueSharp.Common
             return result.Count > 0 ? result : new List<Vector2> { path.Last() };
         }
 
+        /// <summary>
+        ///     Returns the path of the unit appending the ServerPosition at the start, works even if the unit just entered fow.
+        /// </summary>
         public static List<Vector2> GetWaypoints(this Obj_AI_Base unit)
         {
             var result = new List<Vector2>();
@@ -231,6 +245,7 @@ namespace LeagueSharp.Common
                     result = CutPath(path, (int)(unit.MoveSpeed * timePassed));
                 }
             }
+
             return result;
         }
 
@@ -258,19 +273,40 @@ namespace LeagueSharp.Common
             return result;
         }
 
-        public static bool HasBuff(this Obj_AI_Base unit, string buffName, bool dontUseDisplayName = false, bool ignoreCase = false)
+        /// <summary>
+        ///     Returns true if the buff is active and didn't expire.
+        /// </summary>
+        public static bool IsValidBuff(this BuffInstance buff)
         {
-            var name = ignoreCase ? buffName.ToLower() : buffName;
+            return buff.IsActive && buff.EndTime - Game.Time > 0;
+        }
+
+        /// <summary>
+        ///     Returns if the unit has the buff and it is active
+        /// </summary>
+        public static bool HasBuff(this Obj_AI_Base unit,
+            string buffName,
+            bool dontUseDisplayName = false,
+            bool kappa = true)
+        {
             return
                 unit.Buffs.Any(
                     buff =>
-                        ((dontUseDisplayName && buff.Name == name) || (!dontUseDisplayName && buff.DisplayName == name)) &&
-                        buff.IsActive && buff.EndTime - Game.Time > 0);
+                        ((dontUseDisplayName &&
+                          String.Equals(buff.Name, buffName, StringComparison.CurrentCultureIgnoreCase)) ||
+                         (!dontUseDisplayName &&
+                          String.Equals(buff.DisplayName, buffName, StringComparison.CurrentCultureIgnoreCase))) &&
+                        buff.IsValidBuff());
         }
 
+        /// <summary>
+        ///     Returns the spell slot with the name.
+        /// </summary>
         public static SpellSlot GetSpellSlot(this Obj_AI_Hero unit, string name)
         {
-            foreach (var spell in unit.Spellbook.Spells.Where(spell => String.Equals(spell.Name, name, StringComparison.CurrentCultureIgnoreCase)))
+            foreach (var spell in
+                unit.Spellbook.Spells.Where(
+                    spell => String.Equals(spell.Name, name, StringComparison.CurrentCultureIgnoreCase)))
             {
                 return spell.Slot;
             }
@@ -278,11 +314,17 @@ namespace LeagueSharp.Common
             return SpellSlot.Unknown;
         }
 
+        /// <summary>
+        ///     Returns true if the unit is under tower range.
+        /// </summary>
         public static bool UnderTurret(this Obj_AI_Base unit)
         {
             return UnderTurret(unit.Position, true);
         }
 
+        /// <summary>
+        ///     Returns true if the unit is under turret range.
+        /// </summary>
         public static bool UnderTurret(this Obj_AI_Base unit, bool enemyTurretsOnly)
         {
             return UnderTurret(unit.Position, enemyTurretsOnly);
@@ -290,7 +332,8 @@ namespace LeagueSharp.Common
 
         public static bool UnderTurret(this Vector3 position, bool enemyTurretsOnly)
         {
-            return ObjectManager.Get<Obj_AI_Turret>().Any(turret => turret.IsValidTarget(950, enemyTurretsOnly, position));
+            return
+                ObjectManager.Get<Obj_AI_Turret>().Any(turret => turret.IsValidTarget(950, enemyTurretsOnly, position));
         }
 
         public static NavMeshCell ToNavMeshCell(this Vector3 position)
@@ -311,40 +354,127 @@ namespace LeagueSharp.Common
             return point.CountEnemiesInRange(range);
         }
 
+        /// <summary>
+        ///     Counts the enemies in range of Player.
+        /// </summary>
         public static int CountEnemiesInRange(float range)
         {
-            return ObjectManager.Player.CountEnemysInRange(range);
+            return ObjectManager.Player.CountEnemiesInRange(range);
         }
 
+        /// <summary>
+        ///     Counts the enemies in range of Unit.
+        /// </summary>
         public static int CountEnemiesInRange(this Obj_AI_Base unit, float range)
         {
-            return unit.ServerPosition.CountEnemysInRange(range);
+            return unit.ServerPosition.CountEnemiesInRange(range);
         }
 
+        /// <summary>
+        ///     Counts the enemies in range of point.
+        /// </summary>
         public static int CountEnemiesInRange(this Vector3 point, float range)
         {
-            return ObjectManager.Get<Obj_AI_Hero>().Count(h => h.IsValidTarget() && h.ServerPosition.Distance(point, true) < range * range);
+            return ObjectManager.Get<Obj_AI_Hero>().Count(h => h.IsValidTarget(range, true, point));
+        }
+
+        // Use same interface as CountEnemiesInRange
+        /// <summary>
+        ///     Count the allies in range of the Player.
+        /// </summary>
+        public static int CountAlliesInRange(float range)
+        {
+            return ObjectManager.Player.CountAlliesInRange(range);
+        }
+
+        /// <summary>
+        ///     Counts the allies in range of the Unit.
+        /// </summary>
+        public static int CountAlliesInRange(this Obj_AI_Base unit, float range)
+        {
+            return unit.ServerPosition.CountAlliesInRange(range);
+        }
+
+        /// <summary>
+        ///     Counts the allies in the range of the Point.
+        /// </summary>
+        public static int CountAlliesInRange(this Vector3 point, float range)
+        {
+            return ObjectManager.Get<Obj_AI_Hero>()
+                .Where(x => x.IsAlly)
+                .Count(x => x.IsValidTarget(range, false, point));
+        }
+
+        public static List<Obj_AI_Hero> GetAlliesInRange(this Obj_AI_Base unit, float range)
+        {
+            return GetAlliesInRange(unit.ServerPosition, range);
+        }
+
+        public static List<Obj_AI_Hero> GetAlliesInRange(this Vector3 point, float range)
+        {
+            return
+                ObjectManager.Get<Obj_AI_Hero>()
+                    .Where(x => x.IsAlly && point.Distance(x.ServerPosition, true) <= range * range)
+                    .ToList();
+        }
+
+        public static List<Obj_AI_Hero> GetEnemiesInRange(this Obj_AI_Base unit, float range)
+        {
+            return GetEnemiesInRange(unit.ServerPosition, range);
+        }
+
+        public static List<Obj_AI_Hero> GetEnemiesInRange(this Vector3 point, float range)
+        {
+            return
+                ObjectManager.Get<Obj_AI_Hero>()
+                    .Where(x => x.IsEnemy && point.Distance(x.ServerPosition, true) <= range * range)
+                    .ToList();
+        }
+
+        public static List<T> GetObjects<T>(this Vector3 position, float range) where T : GameObject, new()
+        {
+            return ObjectManager.Get<T>().Where(x => position.Distance(x.Position, true) < range * range).ToList();
+        }
+
+        public static List<T> GetObjects<T>(string objectName, float range, Vector3 rangeCheckFrom = new Vector3())
+            where T : GameObject, new()
+        {
+            if (rangeCheckFrom.Equals(Vector3.Zero))
+            {
+                rangeCheckFrom = ObjectManager.Player.ServerPosition;
+            }
+
+            return ObjectManager.Get<T>().Where(x => rangeCheckFrom.Distance(x.Position, true) < range * range).ToList();
+        }
+
+        public static bool IsMovementImpaired(this Obj_AI_Hero hero)
+        {
+            return hero.HasBuffOfType(BuffType.Snare) || hero.HasBuffOfType(BuffType.Stun) ||
+                   hero.HasBuffOfType(BuffType.Taunt);
         }
 
         public static bool InShop(this Obj_AI_Hero hero)
         {
-            return hero.IsVisible && ObjectManager.Get<Obj_Shop>().Any(s => s.Team == hero.Team && hero.Distance(s.Position, true) < 1562500); // 1250²
+            return hero.IsVisible &&
+                   ObjectManager.Get<Obj_Shop>()
+                       .Any(s => s.Team == hero.Team && hero.Distance(s.Position, true) < 1562500);
         }
 
-        [Obsolete("Use Render.Circle", false)]
-        public static void DrawCircle(Vector3 center, float radius, Color color, int thickness = 5, int quality = 30, bool onMinimap = false)
+       public static void DrawCircle(Vector3 center, float radius, Color color, int thickness = 5, int quality = 30, bool onMinimap = false)
         {
             if (!onMinimap)
             {
                 Render.Circle.DrawCircle(center, radius, color, thickness);
                 return;
             }
+
             var pointList = new List<Vector3>();
             for (var i = 0; i < quality; i++)
             {
                 var angle = i * Math.PI * 2 / quality;
                 pointList.Add(new Vector3(center.X + radius * (float)Math.Cos(angle), center.Y + radius * (float)Math.Sin(angle), center.Z));
             }
+
             for (var i = 0; i < pointList.Count; i++)
             {
                 var a = pointList[i];
@@ -363,9 +493,7 @@ namespace LeagueSharp.Common
             {
                 fountainRange = 1102500; //1050 * 1050
             }
-            return hero.IsVisible &&
-                   ObjectManager.Get<Obj_SpawnPoint>()
-                       .Any(sp => sp.Team == hero.Team && hero.Distance(sp.Position, true) < fountainRange);
+            return hero.IsVisible && ObjectManager.Get<Obj_SpawnPoint>().Any(sp => sp.Team == hero.Team && hero.Distance(sp.Position, true) < fountainRange);
         }
 
         public static short GetPacketId(this GamePacketEventArgs gamePacketEventArgs)
@@ -378,9 +506,7 @@ namespace LeagueSharp.Common
             return (short)(packetData[0] + packetData[1] * 256);
         }
 
-        public static void SendAsPacket(this byte[] packetData,
-            PacketChannel channel = PacketChannel.C2S,
-            PacketProtocolFlags protocolFlags = PacketProtocolFlags.Reliable)
+        public static void SendAsPacket(this byte[] packetData, PacketChannel channel = PacketChannel.C2S, PacketProtocolFlags protocolFlags = PacketProtocolFlags.Reliable)
         {
             Game.SendPacket(packetData, channel, protocolFlags);
         }
@@ -412,14 +538,9 @@ namespace LeagueSharp.Common
                             if (ActionList[i].CallbackObject != null)
                             {
                                 ActionList[i].CallbackObject();
-                                //Will somehow result in calling ALL non-internal marked classes of the called assembly and causes NullReferenceExceptions.
                             }
                         }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-
+                        catch (Exception){}
                         ActionList.RemoveAt(i);
                     }
                 }
@@ -447,7 +568,6 @@ namespace LeagueSharp.Common
         public static class HpBarDamageIndicator
         {
             public delegate float DamageToUnitDelegate(Obj_AI_Hero hero);
-
             private const int XOffset = 10;
             private const int YOffset = 20;
             private const int Width = 103;
@@ -455,14 +575,14 @@ namespace LeagueSharp.Common
             public static Color Color = Color.Lime;
             public static bool Enabled = true;
             private static DamageToUnitDelegate _damageToUnit;
-
-            private static readonly Render.Text Text = new Render.Text(
-                0, 0, string.Empty, 11, new ColorBGRA(255, 0, 0, 255), "monospace");
+            private static readonly Render.Text Text = new Render.Text(0, 0, string.Empty, 11, new ColorBGRA(255, 0, 0, 255), "monospace");
 
             public static DamageToUnitDelegate DamageToUnit
             {
-                get { return _damageToUnit; }
-
+                get
+                { 
+                    return _damageToUnit; 
+                }
                 set
                 {
                     if (_damageToUnit == null)
@@ -479,23 +599,18 @@ namespace LeagueSharp.Common
                 {
                     return;
                 }
-
-                foreach (var unit in
-                    ObjectManager.Get<Obj_AI_Hero>().Where(h => h.IsValid && h.IsHPBarRendered && h.IsEnemy))
+                foreach (var unit in ObjectManager.Get<Obj_AI_Hero>().Where(h => h.IsValid && h.IsHPBarRendered && h.IsEnemy))
                 {
                     var barPos = unit.HPBarPosition;
                     var damage = _damageToUnit(unit);
                     var percentHealthAfterDamage = Math.Max(0, unit.Health - damage) / unit.MaxHealth;
                     var xPos = barPos.X + XOffset + Width * percentHealthAfterDamage;
-
-                    //if (damage > unit.Health)
                     {
                         Text.X = (int)barPos.X + XOffset;
                         Text.Y = (int)barPos.Y + YOffset - 13;
                         Text.text = ((int)(unit.Health - damage)).ToString();
                         Text.OnEndScene();
                     }
-
                     Drawing.DrawLine(xPos, barPos.Y + YOffset, xPos, barPos.Y + YOffset + Height, 2, Color);
                 }
             }
@@ -521,7 +636,7 @@ namespace LeagueSharp.Common
                         Name = "The Crystal Scar",
                         ShortName = "crystalScar",
                         Type = MapType.CrystalScar,
-                        Grid = new Vector2(13894 / 2, 13218 / 2),
+                        Grid = new Vector2(13894f / 2, 13218f / 2),
                         StartingLevel = 3
                     }
                 },
@@ -532,7 +647,7 @@ namespace LeagueSharp.Common
                         Name = "The Twisted Treeline",
                         ShortName = "twistedTreeline",
                         Type = MapType.TwistedTreeline,
-                        Grid = new Vector2(15436 / 2, 14474 / 2),
+                        Grid = new Vector2(15436f / 2, 14474f / 2),
                         StartingLevel = 1
                     }
                 },
@@ -543,7 +658,7 @@ namespace LeagueSharp.Common
                         Name = "Summoner's Rift",
                         ShortName = "summonerRift",
                         Type = MapType.SummonersRift,
-                        Grid = new Vector2(13982 / 2, 14446 / 2),
+                        Grid = new Vector2(13982f / 2, 14446f / 2),
                         StartingLevel = 1
                     }
                 },
@@ -554,7 +669,7 @@ namespace LeagueSharp.Common
                         Name = "Howling Abyss",
                         ShortName = "howlingAbyss",
                         Type = MapType.HowlingAbyss,
-                        Grid = new Vector2(13120 / 2, 12618 / 2),
+                        Grid = new Vector2(13120f / 2, 12618f / 2),
                         StartingLevel = 3
                     }
                 }
@@ -566,9 +681,6 @@ namespace LeagueSharp.Common
             public string ShortName { get; private set; }
             public int StartingLevel { get; private set; }
 
-            /// <summary>
-            ///     Returns the current map.
-            /// </summary>
             public static Map GetMap()
             {
                 if (MapById.ContainsKey((int)Game.MapId))
@@ -587,9 +699,6 @@ namespace LeagueSharp.Common
             }
         }
 
-        /// <summary>
-        ///     Internal class used to get the waypoints even when the enemy enters the fow of war.
-        /// </summary>
         internal static class WaypointTracker
         {
             public static readonly Dictionary<int, List<Vector2>> StoredPaths = new Dictionary<int, List<Vector2>>();
@@ -639,6 +748,12 @@ namespace LeagueSharp.Common
                 }
             }
             return true;
+        }
+
+        public static bool HasMastery(this Obj_AI_Hero source, MasteryData.Mastery data)
+        {
+            return (source.IsValidTarget()) &&
+                   source.Masteries.Find(m => m.Page == data.Tree && m.Id == data.ByteId) != null;
         }
     }
 
