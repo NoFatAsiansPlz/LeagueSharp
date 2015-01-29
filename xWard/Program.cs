@@ -50,6 +50,7 @@ namespace xWard
                     Generales.AddItem(new MenuItem("WardsGeneral", "Hacer la Magia").SetValue(new KeyBind('G', KeyBindType.Press)));
                     Menu.AddSubMenu(Generales);
                 }
+                Menu.AddItem(new MenuItem("Posicion", "Mostrar Posicion Actual: x,y,z").SetValue(false));
                 Menu.AddToMainMenu();
             }
             Drawing.OnDraw += Dibujar_Wards;
@@ -70,6 +71,10 @@ namespace xWard
             if (Menu.Item("WardsAzul").GetValue<KeyBind>().Active)
             {
                 PonerGenerales();
+            }
+            if (Menu.Item("Posicion").GetValue<KeyBind>().Active)
+            {
+                Game.PrintChat(ObjectManager.Player.Position.ToString());
             }
         }
 
@@ -212,19 +217,71 @@ namespace xWard
         {
             if (TrinketN.IsReady())
             {
+                TrinketN.Cast(new Vector3(3261.93f, 7773.65f, 60.0f));// Blue Golem
+                TrinketN.Cast(new Vector3(7831.46f, 3501.13f, 60.0f));// Blue Lizard
+                TrinketN.Cast(new Vector3(10586.62f, 3067.93f, 60.0f));// Blue Tri Bush
+                TrinketN.Cast(new Vector3(6483.73f, 4606.57f, 60.0f));// Blue Pass Bush
+                TrinketN.Cast(new Vector3(7610.46f, 5000.0f, 60.0f));// Blue River Entrance
+                TrinketN.Cast(new Vector3(4717.09f, 7142.35f, 50.83f));// Blue Round Bush
+                TrinketN.Cast(new Vector3(4882.86f, 8393.77f, 27.83f));// Blue River Round Bush
+                TrinketN.Cast(new Vector3(6951.01f, 3040.55f, 52.26f));// Blue Split Push Bush
+                TrinketN.Cast(new Vector3(5583.74f, 3573.83f, 51.43f));// Blue Riveer Center Close
+
+                TrinketN.Cast(new Vector3(4749.79f, 5890.76f, 53.59f));// Blue Mid T1
+                TrinketN.Cast(new Vector3(5983.58f, 1547.98f, 52.99f));// Blue Bot T2
+                TrinketN.Cast(new Vector3(1213.70f, 5324.73f, 58.77f));// Blue Top T2
             }
 
             if (SightStone.IsReady())
             {
+                SightStone.Cast(new Vector3(3261.93f, 7773.65f, 60.0f));// Blue Golem
+                SightStone.Cast(new Vector3(7831.46f, 3501.13f, 60.0f));// Blue Lizard
+                SightStone.Cast(new Vector3(10586.62f, 3067.93f, 60.0f));// Blue Tri Bush
+                SightStone.Cast(new Vector3(6483.73f, 4606.57f, 60.0f));// Blue Pass Bush
+                SightStone.Cast(new Vector3(7610.46f, 5000.0f, 60.0f));// Blue River Entrance
+                SightStone.Cast(new Vector3(4717.09f, 7142.35f, 50.83f));// Blue Round Bush
+                SightStone.Cast(new Vector3(4882.86f, 8393.77f, 27.83f));// Blue River Round Bush
+                SightStone.Cast(new Vector3(6951.01f, 3040.55f, 52.26f));// Blue Split Push Bush
+                SightStone.Cast(new Vector3(5583.74f, 3573.83f, 51.43f));// Blue Riveer Center Close
+
+                SightStone.Cast(new Vector3(4749.79f, 5890.76f, 53.59f));// Blue Mid T1
+                SightStone.Cast(new Vector3(5983.58f, 1547.98f, 52.99f));// Blue Bot T2
+                SightStone.Cast(new Vector3(1213.70f, 5324.73f, 58.77f));// Blue Top T2
             }
 
             if (WardS.IsReady())
             {
+                WardS.Cast(new Vector3(3261.93f, 7773.65f, 60.0f));// Blue Golem
+                WardS.Cast(new Vector3(7831.46f, 3501.13f, 60.0f));// Blue Lizard
+                WardS.Cast(new Vector3(10586.62f, 3067.93f, 60.0f));// Blue Tri Bush
+                WardS.Cast(new Vector3(6483.73f, 4606.57f, 60.0f));// Blue Pass Bush
+                WardS.Cast(new Vector3(7610.46f, 5000.0f, 60.0f));// Blue River Entrance
+                WardS.Cast(new Vector3(4717.09f, 7142.35f, 50.83f));// Blue Round Bush
+                WardS.Cast(new Vector3(4882.86f, 8393.77f, 27.83f));// Blue River Round Bush
+                WardS.Cast(new Vector3(6951.01f, 3040.55f, 52.26f));// Blue Split Push Bush
+                WardS.Cast(new Vector3(5583.74f, 3573.83f, 51.43f));// Blue Riveer Center Close
+
+                WardS.Cast(new Vector3(4749.79f, 5890.76f, 53.59f));// Blue Mid T1
+                WardS.Cast(new Vector3(5983.58f, 1547.98f, 52.99f));// Blue Bot T2
+                WardS.Cast(new Vector3(1213.70f, 5324.73f, 58.77f));// Blue Top T2
             }
 
 
             if (WardN.IsReady())
             {
+                WardN.Cast(new Vector3(3261.93f, 7773.65f, 60.0f));// Blue Golem
+                WardN.Cast(new Vector3(7831.46f, 3501.13f, 60.0f));// Blue Lizard
+                WardN.Cast(new Vector3(10586.62f, 3067.93f, 60.0f));// Blue Tri Bush
+                WardN.Cast(new Vector3(6483.73f, 4606.57f, 60.0f));// Blue Pass Bush
+                WardN.Cast(new Vector3(7610.46f, 5000.0f, 60.0f));// Blue River Entrance
+                WardN.Cast(new Vector3(4717.09f, 7142.35f, 50.83f));// Blue Round Bush
+                WardN.Cast(new Vector3(4882.86f, 8393.77f, 27.83f));// Blue River Round Bush
+                WardN.Cast(new Vector3(6951.01f, 3040.55f, 52.26f));// Blue Split Push Bush
+                WardN.Cast(new Vector3(5583.74f, 3573.83f, 51.43f));// Blue Riveer Center Close
+
+                WardN.Cast(new Vector3(4749.79f, 5890.76f, 53.59f));// Blue Mid T1
+                WardN.Cast(new Vector3(5983.58f, 1547.98f, 52.99f));// Blue Bot T2
+                WardN.Cast(new Vector3(1213.70f, 5324.73f, 58.77f));// Blue Top T2
             }
 
         }
