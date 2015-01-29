@@ -78,6 +78,11 @@ namespace xWard
             }
         }
 
+        static void PosicionActual(EventArgs args)
+        {
+            Game.PrintChat(ObjectManager.Player.Position.X.ToString() + " - " + ObjectManager.Player.Position.Y.ToString() + " - " + ObjectManager.Player.Position.Z.ToString());
+        }
+
         static void Dibujar_Wards(EventArgs args)
         {
             if (Menu.Item("DibujarAzul").GetValue<bool>())
@@ -128,22 +133,21 @@ namespace xWard
             if (TrinketN.IsReady())
             {
                 TrinketN.Cast(new Vector3(11600.35f, 7090.37f, 51.73f));// Red Golem
+                TrinketN.Cast(new Vector3(8223.67f, 8110.15f, 60.0f));// Purple Nidlane
+                TrinketN.Cast(new Vector3(9736.8f, 6916.26f, 51.98f));// Purple Mid Path
+                TrinketN.Cast(new Vector3(10074.63f, 7761.62f, 51.74f));// Red Round Bush
                 TrinketN.Cast(new Vector3(11573.9f, 6457.76f, 51.71f));// Red Golem2
                 TrinketN.Cast(new Vector3(12629.72f, 4908.16f, 48.62f));// Red Tri Bush2
                 TrinketN.Cast(new Vector3(7018.75f, 11362.12f, 54.76f));// Red Lizard
                 TrinketN.Cast(new Vector3(4232.69f, 11869.25f, 47.56f));// Red Tri Bush
                 TrinketN.Cast(new Vector3(8198.22f, 10267.89f, 49.38f));// Red Pass Bush
                 TrinketN.Cast(new Vector3(7202.43f, 9881.83f, 53.18f));// Red River Entrance
-                TrinketN.Cast(new Vector3(10074.63f, 7761.62f, 51.74f));// Red Round Bush
                 TrinketN.Cast(new Vector3(9795.85f, 6355.15f, -12.21f));// Red River Round Bush
                 TrinketN.Cast(new Vector3(7836.85f, 11906.34f, 56.48f));// Red Split Push Bush
 
                 TrinketN.Cast(new Vector3(12731.25f, 9132.66f, 50.32f));// Red Bot T2
                 TrinketN.Cast(new Vector3(8036.52f, 12882.94f, 45.19f));// Red Bot T2
                 TrinketN.Cast(new Vector3(9757.9f, 8768.25f, 50.73f));// Red Mid T1
-
-                TrinketN.Cast(new Vector3(8223.67f, 8110.15f, 60.0f));   // Purple Nidlane
-                TrinketN.Cast(new Vector3(9736.8f, 6916.26f, 51.98f));   // Purple Mid Path
             }
             if (SightStone.IsReady())
             {
