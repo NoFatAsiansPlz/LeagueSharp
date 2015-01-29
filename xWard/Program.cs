@@ -31,13 +31,18 @@ namespace xWard
 
             Menu = new Menu("DropHackPotente", "DropHack Potente", true);
             {
+                var ModoXward = new Menu("Modo Xward", "Modo xXero");
+                {
+                    ModoXward.AddItem(new MenuItem("DibujoXward", "Dibujar Circulos Wards :P").SetValue(false));
+                    ModoXward.AddItem(new MenuItem("ModoXward", "Hacer la Magia").SetValue(new KeyBind('Z', KeyBindType.Press)));
+                    Menu.AddSubMenu(ModoXward);
+                }
                 var LadoRojo = new Menu("Lado Rojo", "Lado Rojo");
                 {
                     LadoRojo.AddItem(new MenuItem("DibujarRojo", "Dibujar Circulos Wards Rojo :P").SetValue(false));
                     LadoRojo.AddItem(new MenuItem("WardsRojo", "Hacer la Magia").SetValue(new KeyBind('R', KeyBindType.Press)));
                     Menu.AddSubMenu(LadoRojo);
                 }
-
                 var LadoAzul = new Menu("Lado Azul", "Lado Azul");
                 {
                     LadoAzul.AddItem(new MenuItem("DibujarAzul", "Dibujar Circulos Wards Azul :P").SetValue(false));
@@ -60,6 +65,10 @@ namespace xWard
 
         static void Game_OnGameUpdate(EventArgs args)
         {
+            if (Menu.Item("ModoXward").GetValue<KeyBind>().Active)
+            {
+                ModoXWard();
+            }
             if (Menu.Item("WardsRojo").GetValue<KeyBind>().Active)
             {
                 PonerRojos();
@@ -85,6 +94,35 @@ namespace xWard
 
         static void Dibujar_Wards(EventArgs args)
         {
+            if (Menu.Item("DibujoXward").GetValue<bool>())
+            {
+                Render.Circle.DrawCircle(new Vector3(2524, 10406, 54f), 125f, Color.Blue);
+                Render.Circle.DrawCircle(new Vector3(1774, 10756, 52f), 125f, Color.Blue);
+                Render.Circle.DrawCircle(new Vector3(5520, 6342, 51f), 125f, Color.Blue);
+                Render.Circle.DrawCircle(new Vector3(5674, 7358, 51f), 125f, Color.Blue);
+                Render.Circle.DrawCircle(new Vector3(7990, 4282, 53f), 125f, Color.Blue);
+                Render.Circle.DrawCircle(new Vector3(8256, 2920, 51f), 125f, Color.Blue);
+                Render.Circle.DrawCircle(new Vector3(4818, 10866, -71f), 125f, Color.Blue);
+                Render.Circle.DrawCircle(new Vector3(6824, 10656, 55f), 125f, Color.Blue);
+                Render.Circle.DrawCircle(new Vector3(6574, 12006, 56f), 125f, Color.Blue);
+                Render.Circle.DrawCircle(new Vector3(9130, 8346, 53f), 125f, Color.Blue);
+                Render.Circle.DrawCircle(new Vector3(9422, 7408, 52f), 125f, Color.Blue);
+                Render.Circle.DrawCircle(new Vector3(12372, 4508, 51f), 125f, Color.Blue);
+                Render.Circle.DrawCircle(new Vector3(13003, 3818, 51f), 125f, Color.Blue);
+                Render.Circle.DrawCircle(new Vector3(2729, 10879, -71f), 125f, Color.Green);
+                Render.Circle.DrawCircle(new Vector3(2303, 10868, 53f), 125f, Color.Green);
+                Render.Circle.DrawCircle(new Vector3(5223, 6789, 50f), 125f, Color.Green);
+                Render.Circle.DrawCircle(new Vector3(5191, 7137, 50f), 125f, Color.Green);
+                Render.Circle.DrawCircle(new Vector3(8368, 4594, 51f), 125f, Color.Green);
+                Render.Circle.DrawCircle(new Vector3(8100, 3429, 51f), 125f, Color.Green);
+                Render.Circle.DrawCircle(new Vector3(4634, 11283, 49f), 125f, Color.Green);
+                Render.Circle.DrawCircle(new Vector3(6672, 11466, 53f), 125f, Color.Green);
+                Render.Circle.DrawCircle(new Vector3(6518, 10367, 53f), 125f, Color.Green);
+                Render.Circle.DrawCircle(new Vector3(9572, 8038, 57f), 125f, Color.Green);
+                Render.Circle.DrawCircle(new Vector3(9697, 7854, 51f), 125f, Color.Green);
+                Render.Circle.DrawCircle(new Vector3(12235, 4068, -68f), 125f, Color.Green);
+                Render.Circle.DrawCircle(new Vector3(12443, 4021, -7f), 125f, Color.Green);
+            }
             if (Menu.Item("DibujarAzul").GetValue<bool>())
             {
                 Render.Circle.DrawCircle(new Vector3(3261.93f, 7773.65f, 60.0f), 125f, Color.Blue);// Blue Golem
@@ -125,6 +163,81 @@ namespace xWard
                 Render.Circle.DrawCircle(new Vector3(9344.95f, 5703.43f, -64.07f), 125f, Color.White);// Dragon Bush
                 Render.Circle.DrawCircle(new Vector3(4334.98f, 9714.54f, -60.42f), 125f, Color.White);// Baron
                 Render.Circle.DrawCircle(new Vector3(5363.31f, 9157.05f, -62.70f), 125f, Color.White);// Baron Bush
+            }
+        }
+
+        private static void ModoXWard()
+        {
+            if (TrinketN.IsReady())
+            {
+                TrinketN.Cast(new Vector3(2729, 10879, -71f));
+
+                TrinketN.Cast(new Vector3(2303, 10868, 53f));
+                TrinketN.Cast(new Vector3(5223, 6789, 50f));
+                TrinketN.Cast(new Vector3(5191, 7137, 50f));
+                TrinketN.Cast(new Vector3(8368, 4594, 51f));
+                TrinketN.Cast(new Vector3(8100, 3429, 51f));
+                TrinketN.Cast(new Vector3(4634, 11283, 49f));
+                TrinketN.Cast(new Vector3(6672, 11466, 53f));
+                TrinketN.Cast(new Vector3(6518, 10367, 53f));
+                TrinketN.Cast(new Vector3(9572, 8038, 57f));
+                TrinketN.Cast(new Vector3(9697, 7854, 51f));
+                TrinketN.Cast(new Vector3(12235, 4068, -68f));
+                TrinketN.Cast(new Vector3(12443, 4021, -7f));
+                return;
+            }
+
+            if (SightStone.IsReady())
+            {
+                SightStone.Cast(new Vector3(2729, 10879, -71f));
+                SightStone.Cast(new Vector3(2303, 10868, 53f));
+                SightStone.Cast(new Vector3(5223, 6789, 50f));
+                SightStone.Cast(new Vector3(5191, 7137, 50f));
+                SightStone.Cast(new Vector3(8368, 4594, 51f));
+                SightStone.Cast(new Vector3(8100, 3429, 51f));
+                SightStone.Cast(new Vector3(4634, 11283, 49f));
+                SightStone.Cast(new Vector3(6672, 11466, 53f));
+                SightStone.Cast(new Vector3(6518, 10367, 53f));
+                SightStone.Cast(new Vector3(9572, 8038, 57f));
+                SightStone.Cast(new Vector3(9697, 7854, 51f));
+                SightStone.Cast(new Vector3(12235, 4068, -68f));
+                SightStone.Cast(new Vector3(12443, 4021, -7f));
+                return;
+            }
+
+            if (WardS.IsReady())
+            {
+                WardS.Cast(new Vector3(2729, 10879, -71f));
+                WardS.Cast(new Vector3(2303, 10868, 53f));
+                WardS.Cast(new Vector3(5223, 6789, 50f));
+                WardS.Cast(new Vector3(5191, 7137, 50f));
+                WardS.Cast(new Vector3(8368, 4594, 51f));
+                WardS.Cast(new Vector3(8100, 3429, 51f));
+                WardS.Cast(new Vector3(4634, 11283, 49f));
+                WardS.Cast(new Vector3(6672, 11466, 53f));
+                WardS.Cast(new Vector3(6518, 10367, 53f));
+                WardS.Cast(new Vector3(9572, 8038, 57f));
+                WardS.Cast(new Vector3(9697, 7854, 51f));
+                WardS.Cast(new Vector3(12235, 4068, -68f));
+                WardS.Cast(new Vector3(12443, 4021, -7f));
+                return;
+            }
+            if (WardN.IsReady())
+            {
+                WardN.Cast(new Vector3(2729, 10879, -71f));
+                WardN.Cast(new Vector3(2303, 10868, 53f));
+                WardN.Cast(new Vector3(5223, 6789, 50f));
+                WardN.Cast(new Vector3(5191, 7137, 50f));
+                WardN.Cast(new Vector3(8368, 4594, 51f));
+                WardN.Cast(new Vector3(8100, 3429, 51f));
+                WardN.Cast(new Vector3(4634, 11283, 49f));
+                WardN.Cast(new Vector3(6672, 11466, 53f));
+                WardN.Cast(new Vector3(6518, 10367, 53f));
+                WardN.Cast(new Vector3(9572, 8038, 57f));
+                WardN.Cast(new Vector3(9697, 7854, 51f));
+                WardN.Cast(new Vector3(12235, 4068, -68f));
+                WardN.Cast(new Vector3(12443, 4021, -7f));
+                return;
             }
         }
 
