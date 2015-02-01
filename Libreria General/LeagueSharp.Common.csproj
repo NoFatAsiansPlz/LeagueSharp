@@ -72,16 +72,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="clipper_library">
-      <HintPath>C:\Users\Alvaro\Documents\LeagueSharp\\System\clipper_library.dll</HintPath>
+      <HintPath>..\..\..\LeagueSharp\System\clipper_library.dll</HintPath>
     </Reference>
     <Reference Include="LeagueSharp">
-      <HintPath>C:\Users\Alvaro\Documents\LeagueSharp\\System\LeagueSharp.dll</HintPath>
+      <HintPath>..\..\..\LeagueSharp\System\LeagueSharp.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>C:\Users\Alvaro\Documents\LeagueSharp\\System\SharpDX.dll</HintPath>
+      <HintPath>..\..\..\LeagueSharp\System\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
-      <HintPath>C:\Users\Alvaro\Documents\LeagueSharp\\System\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>..\..\..\LeagueSharp\System\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -106,10 +106,11 @@
     <Compile Include="Data\ItemData.cs" />
     <Compile Include="Data\MasteryData.cs" />
     <Compile Include="GamePacket.cs" />
-    <Compile Include="ItemData.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="HealthPrediction.cs" />
+    <Compile Include="HeroManager.cs" />
     <Compile Include="Interrupter.cs" />
+    <Compile Include="Interrupter2.cs" />
     <Compile Include="LastCastedSpell.cs" />
     <Compile Include="MapPositions.cs" />
     <Compile Include="Menu.cs" />
@@ -139,10 +140,14 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\CPForm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\muerte.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

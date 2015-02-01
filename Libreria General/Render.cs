@@ -1,28 +1,51 @@
-﻿using System;
+﻿#region LICENSE
+
+/*
+ Copyright 2014 - 2014 LeagueSharp
+ Render.cs is part of LeagueSharp.Common.
+ 
+ LeagueSharp.Common is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ LeagueSharp.Common is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with LeagueSharp.Common. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#endregion
+
+#region
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using SharpDX;
 using SharpDX.Direct3D9;
-using Bitmap = System.Drawing.Bitmap;
 using Color = System.Drawing.Color;
-using Device = SharpDX.Direct3D9.Device;
-using Effect = SharpDX.Direct3D9.Effect;
 using Font = SharpDX.Direct3D9.Font;
-using Format = SharpDX.Direct3D9.Format;
-using Image = System.Drawing.Image;
-using Matrix = SharpDX.Matrix;
-using PrimitiveType = SharpDX.Direct3D9.PrimitiveType;
-using Texture = SharpDX.Direct3D9.Texture;
-using Usage = SharpDX.Direct3D9.Usage;
+
+#endregion
 
 namespace LeagueSharp.Common
 {
+    /// <summary>
+    ///     The render class allows you to draw stuff using SharpDX easier.
+    /// </summary>
     public static class Render
     {
         private static readonly List<RenderObject> RenderObjects = new List<RenderObject>();
+        private static List<RenderObject> _renderVisibleObjects = new List<RenderObject>();
+        private static bool _cancelThread;
 
         static Render()
         {
@@ -32,6 +55,7 @@ namespace LeagueSharp.Common
             Drawing.OnDraw += Drawing_OnDraw;
             AppDomain.CurrentDomain.DomainUnload += CurrentDomainOnDomainUnload;
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainOnDomainUnload;
+            new Thread(PrepareObjects).Start();
         }
 
         public static Device Device
@@ -46,6 +70,7 @@ namespace LeagueSharp.Common
 
         private static void CurrentDomainOnDomainUnload(object sender, EventArgs eventArgs)
         {
+            _cancelThread = true;
             foreach (var renderObject in RenderObjects)
             {
                 renderObject.Dispose();
@@ -75,14 +100,9 @@ namespace LeagueSharp.Common
                 return;
             }
 
-            for (var i = -5; i < 5; i++)
+            foreach (var renderObject in _renderVisibleObjects)
             {
-                var currentLayer = i;
-                foreach (var renderObject in
-                    RenderObjects.Where(renderObject => renderObject.Layer == currentLayer && renderObject.Visible))
-                {
-                    renderObject.OnDraw();
-                }
+                renderObject.OnDraw();
             }
         }
 
@@ -95,14 +115,9 @@ namespace LeagueSharp.Common
 
             Device.SetRenderState(RenderState.AlphaBlendEnable, true);
 
-            for (var i = -5; i < 5; i++)
+            foreach (var renderObject in _renderVisibleObjects)
             {
-                var currentLayer = i;
-                foreach (var renderObject in
-                    RenderObjects.Where(renderObject => renderObject.Layer == currentLayer && renderObject.Visible))
-                {
-                    renderObject.OnEndScene();
-                }
+                renderObject.OnEndScene();
             }
         }
 
@@ -118,6 +133,28 @@ namespace LeagueSharp.Common
             RenderObjects.Remove(renderObject);
         }
 
+        private static void PrepareObjects()
+        {
+            while (!_cancelThread)
+            {
+                try
+                {
+                    Thread.Sleep(1);
+                    _renderVisibleObjects =
+                        RenderObjects.ToArray()
+                            .Where(
+                                renderObject =>
+                                    renderObject.Visible && renderObject.Layer >= -5 && renderObject.Layer <= 5)
+                            .OrderBy(renderObject => renderObject.Layer)
+                            .ToList();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(@"Cannot prepare RenderObjects for drawing. Ex:" + e);
+                }
+            }
+        }
+
         public class Circle : RenderObject
         {
             private static VertexBuffer _vertices;
@@ -125,10 +162,8 @@ namespace LeagueSharp.Common
             private static VertexDeclaration _vertexDeclaration;
             private static Effect _effect;
             private static EffectHandle _technique;
-            private static bool Initialized;
-
+            private static bool _initialized;
             private static Vector3 _offset = new Vector3(0, 0, 0);
-
 
             public Circle(GameObject unit, float radius, Color color, int width = 1, bool zDeep = false)
             {
@@ -170,7 +205,6 @@ namespace LeagueSharp.Common
 
             public Vector3 Position { get; set; }
             public GameObject Unit { get; set; }
-
             public float Radius { get; set; }
             public Color Color { get; set; }
             public int Width { get; set; }
@@ -469,9 +503,9 @@ namespace LeagueSharp.Common
 
                 _technique = _effect.GetTechnique(0);
 
-                if (!Initialized)
+                if (!_initialized)
                 {
-                    Initialized = true;
+                    _initialized = true;
                     Drawing.OnPreReset += OnPreReset;
                     Drawing.OnPreReset += OnPostReset;
                     AppDomain.CurrentDomain.DomainUnload += Dispose;
@@ -569,10 +603,10 @@ namespace LeagueSharp.Common
             public delegate Vector2 PositionDelegate();
 
             private readonly SharpDX.Direct3D9.Line _line;
-            public ColorBGRA Color;
             private Vector2 _end;
             private Vector2 _start;
             private int _width;
+            public ColorBGRA Color;
 
             public Line(Vector2 start, Vector2 end, int width, ColorBGRA color)
             {
@@ -648,11 +682,12 @@ namespace LeagueSharp.Common
 
         public class Rectangle : RenderObject
         {
+            public delegate Vector2 PositionDelegate();
+
             private readonly SharpDX.Direct3D9.Line _line;
-            public ColorBGRA Color;
             private int _x;
             private int _y;
-
+            public ColorBGRA Color;
 
             public Rectangle(int x, int y, int width, int height, ColorBGRA color)
             {
@@ -692,9 +727,6 @@ namespace LeagueSharp.Common
 
             public int Width { get; set; }
             public int Height { get; set; }
-
-            public delegate Vector2 PositionDelegate();
-
             public PositionDelegate PositionUpdate { get; set; }
 
             public override void OnEndScene()
@@ -739,9 +771,9 @@ namespace LeagueSharp.Common
         {
             public delegate bool VisibleConditionDelegate(RenderObject sender);
 
+            private bool _visible = true;
             public int Layer;
             public VisibleConditionDelegate VisibleCondition;
-            private bool _visible = true;
 
             public bool Visible
             {
@@ -749,15 +781,11 @@ namespace LeagueSharp.Common
                 set { _visible = value; }
             }
 
-            public virtual void OnDraw() {}
-
-            public virtual void OnEndScene() {}
-
-            public virtual void OnPreReset() {}
-
-            public virtual void OnPostReset() {}
-
             public virtual void Dispose() {}
+            public virtual void OnDraw() {}
+            public virtual void OnEndScene() {}
+            public virtual void OnPreReset() {}
+            public virtual void OnPostReset() {}
         }
 
         public class Sprite : RenderObject
@@ -775,7 +803,6 @@ namespace LeagueSharp.Common
             private Texture _texture;
             private int _x;
             private int _y;
-            private float _rotation;
 
             public Sprite(Bitmap bitmap, Vector2 position)
             {
@@ -870,11 +897,7 @@ namespace LeagueSharp.Common
                 get { return _scale; }
             }
 
-            public float Rotation
-            {
-                set { _rotation = value; }
-                get { return _rotation; }
-            }
+            public float Rotation { set; get; }
 
             public ColorBGRA Color
             {
@@ -906,7 +929,6 @@ namespace LeagueSharp.Common
                         (int) (_scale.Y * rect.Height));
                 }
             }
-
 
             public void Show()
             {
@@ -999,7 +1021,9 @@ namespace LeagueSharp.Common
                 }
 
                 if (Bitmap != null)
+                {
                     Bitmap.Dispose();
+                }
                 Bitmap = newBitmap;
 
                 _texture = Texture.FromMemory(
@@ -1032,6 +1056,7 @@ namespace LeagueSharp.Common
                 }
                 catch (Exception e)
                 {
+                    Reset();
                     Console.WriteLine(@"Common.Render.Sprite.OnEndScene: " + e);
                 }
             }
@@ -1069,20 +1094,16 @@ namespace LeagueSharp.Common
 
             public delegate string TextDelegate();
 
-            private readonly Font _textFont;
-
+            private string _text;
+            private Font _textFont;
+            private int _x;
+            private int _y;
             public bool Centered = false;
             public Vector2 Offset;
             public bool OutLined = false;
-
             public PositionDelegate PositionUpdate;
-            public FontDescription TextFontDescription;
             public TextDelegate TextUpdate;
             public Obj_AI_Base Unit;
-
-            private string _text;
-            private int _x;
-            private int _y;
 
             public Text(string text, int x, int y, int size, ColorBGRA color, string fontName = "Calibri")
             {
@@ -1099,10 +1120,9 @@ namespace LeagueSharp.Common
                         FaceName = fontName,
                         Height = size,
                         OutputPrecision = FontPrecision.Default,
-                        Quality = FontQuality.Default,
+                        Quality = FontQuality.Default
                     });
             }
-
 
             public Text(string text, Vector2 position, int size, ColorBGRA color, string fontName = "Calibri")
             {
@@ -1119,7 +1139,7 @@ namespace LeagueSharp.Common
                         FaceName = fontName,
                         Height = size,
                         OutputPrecision = FontPrecision.Default,
-                        Quality = FontQuality.Default,
+                        Quality = FontQuality.Default
                     });
             }
 
@@ -1147,7 +1167,7 @@ namespace LeagueSharp.Common
                         FaceName = fontName,
                         Height = size,
                         OutputPrecision = FontPrecision.Default,
-                        Quality = FontQuality.Default,
+                        Quality = FontQuality.Default
                     });
             }
 
@@ -1166,10 +1186,9 @@ namespace LeagueSharp.Common
                         FaceName = fontName,
                         Height = size,
                         OutputPrecision = FontPrecision.Default,
-                        Quality = FontQuality.Default,
+                        Quality = FontQuality.Default
                     });
             }
-
 
             public Text(Vector2 position, string text, int size, ColorBGRA color, string fontName = "Calibri")
             {
@@ -1184,8 +1203,19 @@ namespace LeagueSharp.Common
                         FaceName = fontName,
                         Height = size,
                         OutputPrecision = FontPrecision.Default,
-                        Quality = FontQuality.Default,
+                        Quality = FontQuality.Default
                     });
+            }
+
+            public FontDescription TextFontDescription
+            {
+                get { return _textFont.Description; }
+
+                set
+                {
+                    _textFont.Dispose();
+                    _textFont = new Font(Device, value);
+                }
             }
 
             public int X

@@ -1,10 +1,39 @@
-﻿using System;
+﻿#region LICENSE
+
+/*
+ Copyright 2014 - 2014 LeagueSharp
+ Spell.cs is part of LeagueSharp.Common.
+ 
+ LeagueSharp.Common is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ LeagueSharp.Common is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with LeagueSharp.Common. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#endregion
+
+#region
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using SharpDX;
 
+#endregion
+
 namespace LeagueSharp.Common
 {
+    /// <summary>
+    ///     This class allows you to handle the spells easily.
+    /// </summary>
     public class Spell
     {
         public enum CastStates
@@ -25,11 +54,15 @@ namespace LeagueSharp.Common
         private Vector3 _rangeCheckFrom;
         private float _width;
 
-        public Spell(SpellSlot slot, float range = float.MaxValue, TargetSelector.DamageType damageType = TargetSelector.DamageType.Physical)
+        public Spell(SpellSlot slot,
+            float range = float.MaxValue,
+            TargetSelector.DamageType damageType = TargetSelector.DamageType.Physical)
         {
             Slot = slot;
             Range = range;
             DamageType = damageType;
+
+            // Default values
             MinHitChance = HitChance.High;
         }
 
@@ -262,9 +295,7 @@ namespace LeagueSharp.Common
 
         public float GetHitCount(HitChance hitChance = HitChance.High)
         {
-            return
-                (from hero in ObjectManager.Get<Obj_AI_Hero>() where hero.IsValidTarget() select GetPrediction(hero))
-                    .Count(prediction => prediction.Hitchance >= hitChance);
+            return HeroManager.Enemies.Select(e => GetPrediction(e)).Count(p => p.Hitchance >= hitChance);
         }
 
         private CastStates _cast(Obj_AI_Base unit,

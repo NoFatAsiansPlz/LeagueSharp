@@ -1,8 +1,34 @@
-﻿using System;
+﻿#region LICENSE
+
+/*
+ Copyright 2014 - 2014 LeagueSharp
+ TargetSelector.cs is part of LeagueSharp.Common.
+ 
+ LeagueSharp.Common is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ LeagueSharp.Common is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with LeagueSharp.Common. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#endregion
+
+#region
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using SharpDX;
 using Color = System.Drawing.Color;
+
+#endregion
 
 namespace LeagueSharp.Common
 {
@@ -70,8 +96,8 @@ namespace LeagueSharp.Common
                 return;
             }
             _selectedTargetObjAiHero =
-                ObjectManager.Get<Obj_AI_Hero>()
-                    .Where(hero => hero.IsValidTarget() && hero.Distance(Game.CursorPos, true) < 40000) // 200 * 200
+                HeroManager.Enemies
+                    .FindAll(hero => hero.IsValidTarget() && hero.Distance(Game.CursorPos, true) < 40000) // 200 * 200
                     .OrderBy(h => h.Distance(Game.CursorPos, true)).FirstOrDefault();
         }
 
@@ -189,8 +215,7 @@ namespace LeagueSharp.Common
             var autoPriorityItem = new MenuItem("AutoPriority", "Auto arrange priorities").SetShared().SetValue(false);
             autoPriorityItem.ValueChanged += autoPriorityItem_ValueChanged;
 
-            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.Team != ObjectManager.Player.Team)
-                )
+            foreach (var enemy in HeroManager.Enemies)
             {
                 config.AddItem(
                     new MenuItem("TargetSelector" + enemy.ChampionName + "Priority", enemy.ChampionName).SetShared()
@@ -217,8 +242,7 @@ namespace LeagueSharp.Common
             {
                 return;
             }
-            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.Team != ObjectManager.Player.Team)
-                )
+            foreach (var enemy in HeroManager.Enemies)
             {
                 _configMenu.Item("TargetSelector" + enemy.ChampionName + "Priority")
                     .SetValue(new Slider(GetPriorityFromDb(enemy.ChampionName), 5, 1));
@@ -340,8 +364,8 @@ namespace LeagueSharp.Common
                 }
 
                 var targets =
-                    ObjectManager.Get<Obj_AI_Hero>()
-                        .Where(
+                    HeroManager.Enemies
+                        .FindAll(
                             hero =>
                                 ignoredChamps.All(ignored => ignored.NetworkId != hero.NetworkId) &&
                                 IsValidTarget(hero, range, type, ignoreShieldSpells, rangeCheckFrom));
@@ -365,7 +389,7 @@ namespace LeagueSharp.Common
                                         hero.ServerPosition, true));
 
                     case TargetingMode.NearMouse:
-                        return targets.FirstOrDefault(hero => hero.Distance(Game.CursorPos, true) < 22500); // 150 * 150
+                        return targets.Find(hero => hero.Distance(Game.CursorPos, true) < 22500); // 150 * 150
 
                     case TargetingMode.AutoPriority:
                         return
@@ -399,12 +423,20 @@ namespace LeagueSharp.Common
         #endregion
     }
 
+    /// <summary>
+    ///     This TS attempts to always lock the same target, useful for people getting targets for each spell, or for champions
+    ///     that have to burst 1 target.
+    /// </summary>
     public class LockedTargetSelector
     {
         private static Obj_AI_Hero _lastTarget;
         private static TargetSelector.DamageType _lastDamageType;
 
-        public static Obj_AI_Hero GetTarget(float range, TargetSelector.DamageType damageType, bool ignoreShield = true, IEnumerable<Obj_AI_Hero> ignoredChamps = null, Vector3? rangeCheckFrom = null)
+        public static Obj_AI_Hero GetTarget(float range,
+            TargetSelector.DamageType damageType,
+            bool ignoreShield = true,
+            IEnumerable<Obj_AI_Hero> ignoredChamps = null,
+            Vector3? rangeCheckFrom = null)
         {
             if (_lastTarget == null || !_lastTarget.IsValidTarget() || _lastDamageType != damageType)
             {

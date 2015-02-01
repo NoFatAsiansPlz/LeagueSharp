@@ -1,7 +1,33 @@
-﻿using System;
+﻿#region LICENSE
+
+/*
+ Copyright 2014 - 2014 LeagueSharp
+ Prediction.cs is part of LeagueSharp.Common.
+ 
+ LeagueSharp.Common is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ LeagueSharp.Common is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with LeagueSharp.Common. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#endregion
+
+#region
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using SharpDX;
+
+#endregion
 
 namespace LeagueSharp.Common
 {
@@ -517,8 +543,8 @@ namespace LeagueSharp.Common
             var result = new List<PossibleTarget>();
             var originalUnit = input.Unit;
             foreach (var enemy in
-                ObjectManager.Get<Obj_AI_Hero>()
-                    .Where(
+                HeroManager.Enemies
+                    .FindAll(
                         h =>
                             h.NetworkId != originalUnit.NetworkId &&
                             h.IsValidTarget((input.Range + 200 + input.RealRadius), true, input.RangeCheckFrom)))
@@ -840,8 +866,8 @@ namespace LeagueSharp.Common
                         case CollisionableObjects.Heroes:
                             foreach (
                                 var hero in
-                                    ObjectManager.Get<Obj_AI_Hero>()
-                                        .Where(
+                                    HeroManager.Enemies
+                                        .FindAll(
                                             hero =>
                                                 hero.IsValidTarget(
                                                     Math.Min(input.Range + input.Radius + 100, 2000), true,

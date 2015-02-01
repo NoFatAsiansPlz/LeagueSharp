@@ -5227,24 +5227,41 @@ namespace LeagueSharp.Common
             return 1d;
         }
 
-        public static double GetAutoAttackDamage(this Obj_AI_Base source, Obj_AI_Base target, bool includePassive = false)
+        public static double GetAutoAttackDamage(this Obj_AI_Base source,
+            Obj_AI_Base target,
+            bool includePassive = false)
         {
             double result = source.BaseAttackDamage + source.FlatPhysicalDamageMod;
             var k = 1d;
             var reduction = 2d;
+
+
             if (!includePassive)
             {
                 return CalcPhysicalDamage(source, target, result) * k - reduction;
             }
+
+            //Passive damages
             var hero = source as Obj_AI_Hero;
             if (hero != null)
             {
                 var sourceAsHero = hero;
-                if (hero.IsMelee() && target is Obj_AI_Minion && target.IsEnemy && target.Team != GameObjectTeam.Neutral && target.Health <= 200 && hero.Buffs.Any(buff => buff.Name == "talentreaperdisplay" && buff.Count > 0))
+
+                //Spoils of War
+                if (hero.IsMelee() && target is Obj_AI_Minion && target.IsEnemy && target.Team != GameObjectTeam.Neutral &&
+                    target.Health <= 200 && hero.Buffs.Any(buff => buff.Name == "talentreaperdisplay" && buff.Count > 0))
                 {
                     return 200;
                 }
-                result += AttackPassives.Where(p => (p.ChampionName == "" || p.ChampionName == sourceAsHero.ChampionName) && p.IsActive(sourceAsHero, target)).Sum(passive => passive.GetDamage(sourceAsHero, target));
+
+                //Champions passive damages:
+                result +=
+                    AttackPassives.Where(
+                        p =>
+                            (p.ChampionName == "" || p.ChampionName == sourceAsHero.ChampionName) &&
+                            p.IsActive(sourceAsHero, target)).Sum(passive => passive.GetDamage(sourceAsHero, target));
+
+                //BotRK
                 if (Items.HasItem(3153, sourceAsHero))
                 {
                     var d = 0.08 * target.Health;
@@ -5254,38 +5271,74 @@ namespace LeagueSharp.Common
                     }
                     result += d;
                 }
+
+                //Arcane blade
                 if (sourceAsHero.Masteries.Any(m => m.Page == MasteryPage.Offense && m.Id == 132 && m.Points == 1))
                 {
                     reduction -= CalcMagicDamage(hero, target, 0.05 * hero.FlatMagicDamageMod);
                 }
             }
+
             if (!(target is Obj_AI_Hero))
             {
                 return CalcPhysicalDamage(source, target, result) * k - reduction;
             }
+
             var targetAsHero = (Obj_AI_Hero) target;
+
+            //Ninja tabi
             if (Items.HasItem(3047, targetAsHero))
             {
                 k = k * 0.9d;
             }
+
             if (Items.HasItem(1054, targetAsHero))
             {
                 reduction += 8;
             }
+
             return CalcPhysicalDamage(source, target, result) * k - reduction;
         }
 
-        public static double GetComboDamage(this Obj_AI_Hero source, Obj_AI_Base target, IEnumerable<SpellSlot> spellCombo)
+        /// <summary>
+        ///     Calculates the combo damage of the given spell combo on the given target.
+        /// </summary>
+        /// <param name="source">The source object</param>
+        /// <param name="target">The target object</param>
+        /// <param name="spellCombo">SpellType array containing the combo spells</param>
+        /// <returns>Returns the calculated combo damage</returns>
+        public static double GetComboDamage(this Obj_AI_Hero source,
+            Obj_AI_Base target,
+            IEnumerable<SpellSlot> spellCombo)
         {
             return source.GetComboDamage(target, spellCombo.Select(spell => Tuple.Create(spell, 0)).ToArray());
         }
 
-        public static double GetComboDamage(this Obj_AI_Hero source, Obj_AI_Base target, IEnumerable<Tuple<SpellSlot, int>> spellCombo)
+        /// <summary>
+        ///     Calculates the combo damage of the given spell combo on the given target respecting the stage type of each spell
+        /// </summary>
+        /// <param name="source">The source object</param>
+        /// <param name="target">The target object</param>
+        /// <param name="spellCombo">SpellType/StageType tuple containing the combo spells</param>
+        /// <returns>Returns the calculated combo damage</returns>
+        public static double GetComboDamage(this Obj_AI_Hero source,
+            Obj_AI_Base target,
+            IEnumerable<Tuple<SpellSlot, int>> spellCombo)
         {
             return spellCombo.Sum(spell => source.GetSpellDamage(target, spell.Item1, spell.Item2));
         }
 
-        public static bool IsKillable(this Obj_AI_Hero source, Obj_AI_Base target, IEnumerable<Tuple<SpellSlot, int>> spellCombo)
+        /// <summary>
+        ///     Calculates the combo damage of the given spell combo on the given target and returns if that damage would kill the
+        ///     target.
+        /// </summary>
+        /// <param name="source">The source object</param>
+        /// <param name="target">The target object</param>
+        /// <param name="spellCombo">SpellType array containing the combo spells</param>
+        /// <returns>true if target is killable, false if not.</returns>
+        public static bool IsKillable(this Obj_AI_Hero source,
+            Obj_AI_Base target,
+            IEnumerable<Tuple<SpellSlot, int>> spellCombo)
         {
             return GetComboDamage(source, target, spellCombo) > target.Health;
         }
@@ -5312,19 +5365,28 @@ namespace LeagueSharp.Common
             return null;
         }
 
-        public static DamageSpell GetDamageSpell(this Obj_AI_Hero source, Obj_AI_Base target, SpellSlot slot, int stage = 0)
+        public static DamageSpell GetDamageSpell(this Obj_AI_Hero source,
+            Obj_AI_Base target,
+            SpellSlot slot,
+            int stage = 0)
         {
             if (Spells.ContainsKey(source.ChampionName))
             {
-                var spell = Spells[source.ChampionName].FirstOrDefault(s => s.Slot == slot && stage == s.Stage) ?? Spells[source.ChampionName].FirstOrDefault(s => s.Slot == slot);
-                   if (spell == null)
+                var spell = Spells[source.ChampionName].FirstOrDefault(s => s.Slot == slot && stage == s.Stage) ??
+                            Spells[source.ChampionName].FirstOrDefault(s => s.Slot == slot);
+
+                if (spell == null)
                 {
                     return null;
                 }
-                var rawDamage = spell.Damage(source, target, Math.Max(0, Math.Min(source.Spellbook.GetSpell(slot).Level - 1, 5)));
+
+                var rawDamage = spell.Damage(
+                    source, target, Math.Max(0, Math.Min(source.Spellbook.GetSpell(slot).Level - 1, 5)));
                 spell.CalculatedDamage = CalcDamage(source, target, spell.DamageType, rawDamage);
                 return spell;
             }
+
+            //Spell not found.
             return null;
         }
 
@@ -5340,7 +5402,10 @@ namespace LeagueSharp.Common
             return spell != null ? spell.CalculatedDamage : 0d;
         }
 
-        public static double CalcDamage(this Obj_AI_Base source, Obj_AI_Base target, DamageType damageType, double amount)
+        public static double CalcDamage(this Obj_AI_Base source,
+            Obj_AI_Base target,
+            DamageType damageType,
+            double amount)
         {
             switch (damageType)
             {
@@ -5357,6 +5422,8 @@ namespace LeagueSharp.Common
         private static double CalcMagicDamage(Obj_AI_Base source, Obj_AI_Base target, double amount)
         {
             var magicResist = target.SpellBlock;
+
+            //Penetration cant reduce magic resist below 0
             double k;
             if (magicResist < 0)
             {
@@ -5370,8 +5437,12 @@ namespace LeagueSharp.Common
             {
                 k = 100 / (100 + (target.SpellBlock * source.PercentMagicPenetrationMod) - source.FlatMagicPenetrationMod);
             }
+
+            //Take into account the percent passives
             k = PassivePercentMod(source, target, k);
+
             k = k * (1 - target.PercentMagicReduction) * (1 + target.PercentMagicDamageMod);
+
             return k * amount;
         }
 
@@ -5379,17 +5450,24 @@ namespace LeagueSharp.Common
         {
             double armorPenPercent = source.PercentArmorPenetrationMod;
             double armorPenFlat = source.FlatArmorPenetrationMod;
+
+            //Minions return wrong percent values.
             if (source is Obj_AI_Minion)
             {
                 armorPenFlat = 0;
                 armorPenPercent = 1;
             }
+
+            //Turrets passive.
             if (source is Obj_AI_Turret)
             {
                 armorPenFlat = 0;
                 armorPenPercent = 0.7f; //Penetrating Bullets passive.
             }
+
+            //Penetration cant reduce armor below 0
             var armor = target.Armor;
+
             double k;
             if (armor < 0)
             {
@@ -5403,7 +5481,10 @@ namespace LeagueSharp.Common
             {
                 k = 100 / (100 + (target.Armor * armorPenPercent) - armorPenFlat);
             }
+
+            //Take into account the percent passives
             k = PassivePercentMod(source, target, k);
+
             return k * amount + PassiveFlatMod(source, target);
         }
 
@@ -5417,25 +5498,40 @@ namespace LeagueSharp.Common
                 "Red_Minion_Basic",
                 "Blue_Minion_Basic"
             };
+
+            //Minions and towers passives:
             if (source is Obj_AI_Turret)
             {
+                //Siege minions receive 70% damage from turrets
                 if (SiegeMinionList.Contains(target.BaseSkinName))
                 {
                     k = 0.7d * k;
                 }
+
+                //Normal minions take 114% more damage from towers.
                 else if (NormalMinionList.Contains(target.BaseSkinName))
                 {
                     k = (1 / 0.875) * k;
                 }
+
+                // Turrets deal 105% damage to champions for the first attack.
                 else if (target is Obj_AI_Hero)
                 {
                     k = 1.05 * k;
                 }
             }
+
+            //Masteries:
+
+            //Offensive masteries:
             var hero = source as Obj_AI_Hero;
             if (hero != null)
             {
                 var sourceAsHero = hero;
+
+                //Double edge sword:
+                //  Melee champions: You deal 2% increase damage from all sources, but take 1% increase damage from all sources.
+                //  Ranged champions: You deal and take 1.5% increased damage from all sources. 
                 if (sourceAsHero.Masteries.Any(m => m.Page == MasteryPage.Offense && m.Id == 65 && m.Points == 1))
                 {
                     if (sourceAsHero.CombatType == GameObjectCombatType.Melee)
@@ -5447,10 +5543,16 @@ namespace LeagueSharp.Common
                         k = k * 1.015d;
                     }
                 }
+
+                //Havoc:
+                //  Increases damage by 3%. 
                 if (sourceAsHero.Masteries.Any(m => m.Page == MasteryPage.Offense && m.Id == 146 && m.Points == 1))
                 {
                     k = k * 1.03d;
                 }
+
+                //Executioner
+                //  Increases damage dealt to champions below 20 / 35 / 50% by 5%. 
                 if (target is Obj_AI_Hero)
                 {
                     var mastery =
@@ -5462,11 +5564,20 @@ namespace LeagueSharp.Common
                     }
                 }
             }
+
+
             if (!(target is Obj_AI_Hero))
             {
                 return k;
             }
+
             var targetAsHero = (Obj_AI_Hero) target;
+
+            //Defensive masteries:
+
+            //Double edge sword:
+            //     Melee champions: You deal 2% increase damage from all sources, but take 1% increase damage from all sources.
+            //     Ranged champions: You deal and take 1.5% increased damage from all sources. 
             if (targetAsHero.Masteries.Any(m => m.Page == MasteryPage.Offense && m.Id == 65 && m.Points == 1))
             {
                 if (target.CombatType == GameObjectCombatType.Melee)
@@ -5485,14 +5596,26 @@ namespace LeagueSharp.Common
         private static double PassiveFlatMod(Obj_AI_Base source, Obj_AI_Base target)
         {
             double d = 0;
+
+            //Offensive masteries:
+
+            //Butcher
+            //  Basic attacks and single target abilities do 2 bonus damage to minions and monsters. 
             var hero = source as Obj_AI_Hero;
             if (hero != null && target is Obj_AI_Minion)
             {
-                if (hero.Masteries.Any(m => m.Page == MasteryPage.Offense && m.Id == 65 && m.Points == 1))
+                if (
+                    hero.Masteries.Any(
+                        m => m.Page == MasteryPage.Offense && m.Id == 65 && m.Points == 1))
                 {
                     d = d + 2;
                 }
             }
+
+            //Defensive masteries:
+
+            //Block
+            //Reduces incoming damage from champion basic attacks by 1 / 2
             if (source is Obj_AI_Hero && target is Obj_AI_Hero)
             {
                 var mastery =
@@ -5502,17 +5625,26 @@ namespace LeagueSharp.Common
                     d = d - 1 * mastery.Points;
                 }
             }
+
+            //Tough Skin
+            //Reduces damage taken from neutral monsters by 1 / 2
             if (source is Obj_AI_Minion && target is Obj_AI_Hero && source.Team == GameObjectTeam.Neutral)
             {
-                var mastery = ((Obj_AI_Hero)target).Masteries.FirstOrDefault(m => m.Page == MasteryPage.Defense && m.Id == 68);
+                var mastery =
+                        ((Obj_AI_Hero)target).Masteries.FirstOrDefault(m => m.Page == MasteryPage.Defense && m.Id == 68);
                 if (mastery != null && mastery.Points >= 1)
                 {
                     d = d - 1 * mastery.Points;
                 }
             }
+
+            //Unyielding
+            //Melee - Reduces all incoming damage from champions by 2
+            //Ranged - Reduces all incoming damage from champions by 1
             if (source is Obj_AI_Hero && target is Obj_AI_Hero)
             {
-                var mastery = ((Obj_AI_Hero)target).Masteries.FirstOrDefault(m => m.Page == MasteryPage.Defense && m.Id == 81);
+                var mastery =
+                        ((Obj_AI_Hero)target).Masteries.FirstOrDefault(m => m.Page == MasteryPage.Defense && m.Id == 81);
                 if (mastery != null && mastery.Points == 1)
                 {
                     if (source.IsMelee())
@@ -5525,6 +5657,7 @@ namespace LeagueSharp.Common
                     }
                 }
             }
+
             return d;
         }
     }
@@ -5532,8 +5665,11 @@ namespace LeagueSharp.Common
     internal class PassiveDamage
     {
         public delegate float GetDamageD(Obj_AI_Hero source, Obj_AI_Base target);
+
         public delegate bool IsActiveD(Obj_AI_Hero source, Obj_AI_Base target);
+
         public string ChampionName = "";
+
         public GetDamageD GetDamage;
         public IsActiveD IsActive;
     }

@@ -33,12 +33,33 @@ namespace LeagueSharp.Common.Data
     {
         public struct Mastery
         {
+            /// <summary>
+            ///     Mastery ByteId
+            /// </summary>
             public byte ByteId;
+
+            /// <summary>
+            ///     Mastery Id
+            /// </summary>
             public int Id;
+
+            /// <summary>
+            ///     Mastery Name
+            /// </summary>
             public string Name;
+
+            /// <summary>
+            ///     Mastery Requirements
+            /// </summary>
             public int RequiredId;
+
+            /// <summary>
+            ///     Mastery Tree
+            /// </summary>
             public MasteryPage Tree;
         }
+
+        #region Masteries
 
         #region Double-Edged Sword
 
@@ -778,6 +799,8 @@ namespace LeagueSharp.Common.Data
             RequiredId = 0,
             ByteId = 146
         };
+
+        #endregion
 
         #endregion
     }

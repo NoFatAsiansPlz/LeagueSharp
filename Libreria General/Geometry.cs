@@ -35,31 +35,47 @@ namespace LeagueSharp.Common
 {
     public static class Geometry
     {
+        //Obj_AI_Base class extended methods:
         public static float Distance(Obj_AI_Base anotherUnit, bool squared = false)
         {
             return ObjectManager.Player.Distance(anotherUnit, squared);
         }
 
+        /// <summary>
+        ///     Calculates the 2D distance to the unit.
+        /// </summary>
         public static float Distance(this Obj_AI_Base unit, Obj_AI_Base anotherUnit, bool squared = false)
         {
             return unit.ServerPosition.To2D().Distance(anotherUnit.ServerPosition.To2D(), squared);
         }
 
+        /// <summary>
+        ///     Calculates the 2D distance to the unit.
+        /// </summary>
         public static float Distance(this Obj_AI_Base unit, AttackableUnit anotherUnit, bool squared = false)
         {
             return unit.ServerPosition.To2D().Distance(anotherUnit.Position.To2D(), squared);
         }
 
+        /// <summary>
+        ///     Calculates the 2D distance to the point.
+        /// </summary>
         public static float Distance(this Obj_AI_Base unit, Vector3 point, bool squared = false)
         {
             return unit.ServerPosition.To2D().Distance(point.To2D(), squared);
         }
 
+        /// <summary>
+        ///     Calculates the 2D distance to the point.
+        /// </summary>
         public static float Distance(this Obj_AI_Base unit, Vector2 point, bool squared = false)
         {
             return unit.ServerPosition.To2D().Distance(point, squared);
         }
 
+        /// <summary>
+        ///     Calculates the 3D distance to the unit.
+        /// </summary>
         public static float Distance3D(this Obj_AI_Base unit, Obj_AI_Base anotherUnit, bool squared = false)
         {
             return squared
@@ -67,11 +83,19 @@ namespace LeagueSharp.Common
                 : Vector3.Distance(unit.Position, anotherUnit.Position);
         }
 
+        //Vector3 class extended methods:
+
+        /// <summary>
+        ///     Converts a Vector3 to Vector2
+        /// </summary>
         public static Vector2 To2D(this Vector3 v)
         {
             return new Vector2(v.X, v.Y);
         }
 
+        /// <summary>
+        ///     Returns the 2D distance (XY plane) between two vector.
+        /// </summary>
         public static float Distance(this Vector3 v, Vector3 other, bool squared = false)
         {
             return v.To2D().Distance(other, squared);
@@ -528,6 +552,10 @@ namespace LeagueSharp.Common
             return Math.Abs(a - b) <= eps;
         }
 
+        /// <summary>
+        ///     Rotates the vector around the set position.
+        ///     Angle is in radians.
+        /// </summary>
         public static Vector2 RotateAroundPoint(this Vector2 rotated, Vector2 around, float angle)
         {
             var sin = Math.Sin(angle);
@@ -539,6 +567,10 @@ namespace LeagueSharp.Common
             return new Vector2((float) x, (float) y);
         }
 
+        /// <summary>
+        ///     Rotates the polygon around the set position.
+        ///     Angle is in radians.
+        /// </summary>
         public static Polygon RotatePolygon(this Polygon polygon, Vector2 around, float angle)
         {
             var p = new Polygon();
@@ -550,6 +582,9 @@ namespace LeagueSharp.Common
             return p;
         }
 
+        /// <summary>
+        ///     Rotates the polygon around to the set direction.
+        /// </summary>
         public static Polygon RotatePolygon(this Polygon polygon, Vector2 around, Vector2 direction)
         {
             var deltaX = around.X - direction.X;
@@ -558,6 +593,9 @@ namespace LeagueSharp.Common
             return RotatePolygon(polygon, around, angle - DegreeToRadian(90));
         }
 
+        /// <summary>
+        ///     Moves the polygone to the set position. It dosent rotate the polygone.
+        /// </summary>
         public static Polygon MovePolygone(this Polygon polygon, Vector2 moveTo)
         {
             var p = new Polygon();
