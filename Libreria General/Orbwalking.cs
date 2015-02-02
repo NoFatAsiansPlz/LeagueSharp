@@ -697,6 +697,7 @@ namespace LeagueSharp.Common
                             var sprite = new Render.Sprite(Properties.Resources.muerte, minion.HPBarPosition);
                             sprite.Scale = new Vector2(0.08f, 0.08f);
                             sprite.PositionUpdate += () => new Vector2(minion.HPBarPosition.X + 140, minion.HPBarPosition.Y + 10);
+                            sprite.VisibleCondition += s => _config.Item("Matar_Minion").GetValue<bool>() && minion.Health <= Player.GetAutoAttackDamage(minion, true);
                             sprite.Add();
                         }
                     }
