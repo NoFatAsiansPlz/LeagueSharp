@@ -72,9 +72,11 @@ namespace LeagueSharp.Common
         private static int _delay = 80;
         private static float _minDistance = 400;
         private static readonly Random _random = new Random(DateTime.Now.Millisecond);
+        private static bool CampeonCUerpoACuerpo;
 
         static Orbwalking()
         {
+            CampeonCUerpoACuerpo = Player.IsMelee();
             Player = ObjectManager.Player;
             Obj_AI_Base.OnProcessSpellCast += OnProcessSpell;
             GameObject.OnCreate += Obj_SpellMissile_OnCreate;
@@ -284,12 +286,7 @@ namespace LeagueSharp.Common
             LastMoveCommandPosition = point;
         }
 
-        public static void Orbwalk(AttackableUnit target,
-            Vector3 position,
-            float extraWindup = 90,
-            float holdAreaRadius = 0,
-            bool useFixedDistance = true,
-            bool randomizeMinDistance = true)
+        public static void Orbwalk(AttackableUnit target, Vector3 position, float extraWindup = 90, float holdAreaRadius = 0, bool useFixedDistance = true, bool randomizeMinDistance = true)
         {
             try
             {
@@ -297,7 +294,6 @@ namespace LeagueSharp.Common
                 {
                     DisableNextAttack = false;
                     FireBeforeAttack(target);
-
                     if (!DisableNextAttack)
                     {
                         Player.IssueOrder(GameObjectOrder.AttackUnit, target);
@@ -311,16 +307,29 @@ namespace LeagueSharp.Common
                         return;
                     }
                 }
-
-                if (CanMove(extraWindup))
+                if (target != null && CampeonCUerpoACuerpo && InAutoAttackRange(target) && Game.CursorPos.Distance(target.Position) < 300)
                 {
-                    MoveTo(position, holdAreaRadius, false, useFixedDistance, randomizeMinDistance);
+                    MoveTo(PrediccionCuerpoaCuerpo(target as Obj_AI_Hero), holdAreaRadius, false, useFixedDistance, randomizeMinDistance);
+                }
+                else
+                {
+                    if (CanMove(extraWindup))
+                    {
+                        MoveTo(position, holdAreaRadius, false, useFixedDistance, randomizeMinDistance);
+                    }
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
+        }
+
+        public static Vector3 PrediccionCuerpoaCuerpo(Obj_AI_Base objetivo)
+        {
+            var PredecirHechizoOP = new Spell(SpellSlot.Unknown, (ObjectManager.Player.AttackRange + ObjectManager.Player.BoundingRadius));
+            PredecirHechizoOP.SetTargetted(ObjectManager.Player.BasicAttack.SpellCastTime, ObjectManager.Player.BasicAttack.MissileSpeed);
+            return PredecirHechizoOP.GetPrediction(objetivo).UnitPosition;
         }
 
         public static void ResetAutoAttackTimer()
