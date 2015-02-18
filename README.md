@@ -1,2 +1,2 @@
 # LeagueSharp
-Lag Exploit
+Lag Exploits
