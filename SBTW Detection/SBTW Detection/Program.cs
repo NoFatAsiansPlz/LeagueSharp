@@ -44,7 +44,7 @@ namespace SBTWDetection
                 Text.VisibleCondition += sender => Active;
                 Text.Add();
 
-                Game.OnGameUpdate += Update;
+                Game.OnUpdate += Update;
             }
 
             private void Update(EventArgs args)
