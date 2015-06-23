@@ -39,6 +39,7 @@ namespace HaydariGeceler_cici_wipi_ENG
                     if (duramk == false)
                     {
                         
+                        Game.Say("/all                           ");
                         Game.Say("/all   ######        ######   ");
                         Game.Say("/all  ##                  ##       ");
                         Game.Say("/all  ##                  ##       ");
