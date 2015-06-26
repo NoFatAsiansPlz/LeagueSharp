@@ -86,7 +86,7 @@ namespace HaydariGeceler_cici_wipi_ENG
                     if (duramk == false)
                     {
 
-                        Game.Say("/all they added a new easter egg in league, press enter twice and type dfgg, it will post a bigger version of gg in chat");
+                        Game.Say("/all they added a new easter egg in league, press enter twice and type gg fid, it will do a ascii version of gg in chat");
                         gameTime1 = Game.Time + 1;
 
                     }
