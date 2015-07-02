@@ -17,7 +17,7 @@ namespace Fake_Server_Messages
     private static Menu Config;
     private static string premsg = "";
     private static float timestampX1;
-    private static string sender = "[Riot Games™]";
+    private static string sender = "[Riot GamesÂ©]";
     private static bool allX = true;
     private static string message;
 
@@ -79,14 +79,14 @@ namespace Fake_Server_Messages
         var fakemsg = args.Message.Substring(args.Message.IndexOf(" ") + 1);
         if (allX == true)
         {
-          var message = string.Format("/all {0}{1}  {2}  {3}", premsg, new string(' ', 45 + sender.Length), sender, fakemsg);
+          var message = string.Format("/all {0}{1}  {2}  {3}", premsg, new string(' ', 50 + sender.Length), sender, fakemsg);
           Game.Say(message);
           args.Process = false;
 
         }
         else if (allX == false)
         {
-          var message = string.Format("     {0}{1}  {2}  {3}", premsg, new string(' ', 50 + sender.Length), sender, fakemsg);
+          var message = string.Format("     {0}{1}  {2}  {3}", premsg, new string(' ', 55 + sender.Length), sender, fakemsg);
           Game.Say(message);
           args.Process = false;
 
