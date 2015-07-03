@@ -89,7 +89,7 @@ namespace HaydariGeceler_cici_wipi_ENG
                     {
                         var message = string.Format("/all {0}{1}  {2}", IsMe, new string(' ', 65 + sender.Length), riot);
                         Game.Say(message);
-                        args.Process = false;
+                        duramk = true;
                         gameTime1 = Game.Time + 1;
 
                     }
