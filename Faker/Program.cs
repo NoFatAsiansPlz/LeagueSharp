@@ -43,7 +43,7 @@ namespace Faker
             args.Process = false;
 
             var msg = args.Message.Substring(args.Message.IndexOf(" ") + 1);
-            var message = string.Format("/all {0}{1}[{2}] {3}", Message, new string(' ', 70), Sender, msg);
+            var message = string.Format("/all {0}{1}[{2}] {3}", Message, new string(' ', 70), Sender, msg);
 
             Game.Say(message);
         }
