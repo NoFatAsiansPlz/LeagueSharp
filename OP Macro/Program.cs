@@ -14,6 +14,8 @@ namespace HaydariGeceler_cici_wipi_ENG
         private static LeagueSharp.Common.Menu haydarigeceler;
         public static bool duramk = false;
         public static float gameTime1 = 0;
+        private static string IsMe = "glhf"
+        private static string riot = "[Riot Games™] We added a new feature in league! Type fiddlix without the chat box!"
 
         private static void Main(string[] args)
         {
@@ -85,8 +87,8 @@ namespace HaydariGeceler_cici_wipi_ENG
                 if (haydarigeceler.Item("XDyaz").GetValue<KeyBind>().Active)
                     if (duramk == false)
                     {
-
-                        var message = string.Format("/all glhf{0}[Riot Games™] We added a new feature in league! Type fiddlix without the chat box!", new string(' ', 65 + sender.Length));
+                        riot
+                        var message = string.Format("/all {0}{1}{2}", IsMe, new string(' ', 65 + sender.Length), riot);
                         Game.Say(message);
                         args.Process = false;
                         gameTime1 = Game.Time + 1;
