@@ -89,7 +89,7 @@ namespace Fake_Server_Messages
         }
         else if (allX == false)
         {
-          var message = string.Format("     {0}{1}  {2}  {3}", premsg, new string(' ', 80 - (summonerNameLength + championName + premsg.Length)), sender, fakemsg);
+          var message = string.Format("     {0}{1}  {2}  {3}", premsg, new string(' ', 90 - (summonerNameLength + championName + premsg.Length)), sender, fakemsg);
           Game.Say(message);
           args.Process = false;
 
