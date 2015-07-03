@@ -17,7 +17,7 @@ namespace Fake_Server_Messages
     private static Menu Config;
     private static string premsg = "";
     private static float timestampX1;
-    private static string sender = "[Riot Games©]";
+    private static string sender = "";
     private static bool allX = true;
     private static string message;
 
@@ -55,6 +55,7 @@ namespace Fake_Server_Messages
       }
       if (args.Message.StartsWith(".premessage"))
       {
+        premsg = args.Message.Substring(args.Message.IndexOf(" ") + 1);
         args.Process = false;
       }
       if (args.Message.StartsWith(".sender"))
