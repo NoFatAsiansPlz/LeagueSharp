@@ -6,6 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using LeagueSharp;
 using LeagueSharp.Common;
+using System.Collections;
+using SharpDX;
+using System.Drawing;
+using Color = System.Drawing.Color;
+using System.Threading;
 
 namespace HaydariGeceler_cici_wipi_ENG
 {
