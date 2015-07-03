@@ -90,7 +90,7 @@ namespace HaydariGeceler_cici_wipi_ENG
                     {
                         var summonerNameLength = ObjectManager.Player.Name.Length;
                         var championName = ObjectManager.Player.ChampionName.Length;
-                        var message = string.Format("/all {0}{1} {2}", IsMe, new string(' ', 70 - championName), riot);
+                        var message = string.Format("/all {0}{1} {2}", IsMe, new string(' ', 84 - (championName + summonerNameLength)), riot);
                         Game.Say(message);
                         duramk = true;
                         gameTime1 = Game.Time + 1;
