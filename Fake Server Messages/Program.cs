@@ -82,7 +82,7 @@ namespace Fake_Server_Messages
         var championName = ObjectManager.Player.ChampionName.Length;
         if (allX == true)
         {
-          var message = string.Format("/all {0}{1}  {2}  {3}", premsg, new string(' ', 84 + premsg.Length - (summonerNameLength + championName)), sender, fakemsg);
+          var message = string.Format("/all {0}{1}  {2}  {3}", premsg, new string(' ', 84 - (summonerNameLength + championName + premsg.Length)), sender, fakemsg);
           Game.Say(message);
           args.Process = false;
 
