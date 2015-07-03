@@ -88,7 +88,9 @@ namespace HaydariGeceler_cici_wipi_ENG
                 if (haydarigeceler.Item("XDyaz").GetValue<KeyBind>().Active)
                     if (duramk == false)
                     {
-                        var message = string.Format("/all {0}{1} {2}", IsMe, new string(' ', 61), riot);
+                        var summonerNameLength = ObjectManager.Player.Name.Length;
+                        var championName = ObjectManager.Player.ChampionName.Length;
+                        var message = string.Format("/all {0}{1} {2}", IsMe, new string(' ', 70), riot);
                         Game.Say(message);
                         duramk = true;
                         gameTime1 = Game.Time + 1;
