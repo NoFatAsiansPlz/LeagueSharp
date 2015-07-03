@@ -21,6 +21,7 @@ namespace HaydariGeceler_cici_wipi_ENG
         public static float gameTime1 = 0;
         private static string IsMe = "glhf";
         private static string riot = "[Riot Games™] We added a new feature in league! Type fiddlix without the chat box!";
+        private static string message;
 
         private static void Main(string[] args)
         {
