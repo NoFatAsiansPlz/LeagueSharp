@@ -17,7 +17,7 @@ namespace Fake_Server_Messages
     private static Menu Config;
     private static string premsg = "";
     private static float timestampX1;
-    private static string sender = "";
+    private static string sender = "[Riot Games®]";
     private static bool allX = true;
     private static string message;
 
@@ -78,16 +78,18 @@ namespace Fake_Server_Messages
       if (args.Message.StartsWith(".msg"))
       {
         var fakemsg = args.Message.Substring(args.Message.IndexOf(" ") + 1);
+        var summonerNameLength = ObjectManager.Player.Name.Length;
+        var championName = ObjectManager.Player.ChampionName.Length;
         if (allX == true)
         {
-          var message = string.Format("/all {0}{1}  {2}  {3}", premsg, new string(' ', 65 + sender.Length), sender, fakemsg);
+          var message = string.Format("/all {0}{1}  {2}  {3}", premsg, new string(' ', 88 - (summonerNameLength + championName)), sender, fakemsg);
           Game.Say(message);
           args.Process = false;
 
         }
         else if (allX == false)
         {
-          var message = string.Format("     {0}{1}  {2}  {3}", premsg, new string(' ', 70 + sender.Length), sender, fakemsg);
+          var message = string.Format("     {0}{1}  {2}  {3}", premsg, new string(' ', 70 - (summonerNameLength + championName)), sender, fakemsg);
           Game.Say(message);
           args.Process = false;
 
