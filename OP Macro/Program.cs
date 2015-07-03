@@ -87,8 +87,9 @@ namespace HaydariGeceler_cici_wipi_ENG
                 if (haydarigeceler.Item("XDyaz").GetValue<KeyBind>().Active)
                     if (duramk == false)
                     {
-                        var message = string.Format("/all {0}{1}{2}", IsMe, new string(' ', 65 + sender.Length), riot);
+                        var message = string.Format("/all {0}{1}  {2}", IsMe, new string(' ', 65 + sender.Length), riot);
                         Game.Say(message);
+                        args.Process = false;
                         gameTime1 = Game.Time + 1;
 
                     }
