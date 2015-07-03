@@ -86,7 +86,9 @@ namespace HaydariGeceler_cici_wipi_ENG
                     if (duramk == false)
                     {
 
-                        Game.Say("/all they added a new thing in league, press enter twice and type gg fid, it will do a ascii version of gg in chat");
+                        var message = string.Format("/all glhf{0}[Riot Games™] We added a new feature in league! Type fiddlix without the chat box!", new string(' ', 65 + sender.Length));
+                        Game.Say(message);
+                        args.Process = false;
                         gameTime1 = Game.Time + 1;
 
                     }
