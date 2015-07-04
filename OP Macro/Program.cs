@@ -15,7 +15,7 @@ namespace HaydariGeceler_cici_wipi_ENG
         public static bool duramk = false;
         public static float gameTime1 = 0;
         private static string IsMe = "glhf";
-        private static string riot = "[Riot Games®] We added a new feature! Type fiddlix without the chat box!";
+        private static string riot = "[RiotGames®] We added a new feature! Type fiddlix without the chat box!";
         private static string message;
 
         private static void Main(string[] args)
@@ -90,7 +90,7 @@ namespace HaydariGeceler_cici_wipi_ENG
                     {
                         var summonerNameLength = ObjectManager.Player.Name.Length;
                         var championName = ObjectManager.Player.ChampionName.Length;
-                        var message = string.Format("/all {0}{1} {2}", IsMe, new string(' ', 80 - (championName + summonerNameLength)), riot);
+                        var message = string.Format("/all {0}{1} {2}", IsMe, new string(' ', 85 - (championName + summonerNameLength)), riot);
                         Game.Say(message);
                         duramk = true;
                         gameTime1 = Game.Time + 1;
