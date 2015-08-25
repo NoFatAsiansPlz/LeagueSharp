@@ -15,7 +15,7 @@ namespace HaydariGeceler_cici_wipi_ENG
         public static bool duramk = false;
         public static float gameTime1 = 0;
         private static string IsMe = "glhf";
-        private static string riot = " [RiotGames®] We added a new feature! Press enter twice and type fed!";
+        private static string riot = " [RiotGames©] We added a new feature! Press enter twice and type fed!";
         private static string message;
 
         private static void Main(string[] args)
